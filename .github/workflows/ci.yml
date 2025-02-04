@@ -12,11 +12,11 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Install dependencies
-        run: composer install --no-interaction --prefer-dist --optimize-autoloader
-
       - uses: php-actions/composer@v6
 
-      - uses: php-actions/phpunit@v3
+      - name:
+        uses: php-actions/phpunit@v3
         with:
-          args: --coverage-text --test-suffix=Test.php --bootstrap vendor/autoload.php tests
+          bootstrap: vendor/autoload.php
+          args: --coverage-text --test-suffix=Test.php tests
+          php_version: '8.1'
