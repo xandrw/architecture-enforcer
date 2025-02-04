@@ -1,0 +1,17 @@
+name: Run tests on version tag
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: php-actions/composer@v6
+      - uses: php-actions/phpunit@v3
+        with:
+          args: --coverage-text
