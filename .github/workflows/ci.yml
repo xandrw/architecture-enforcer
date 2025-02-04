@@ -17,6 +17,7 @@ jobs:
       - name: PHPUnit Tests
         uses: php-actions/phpunit@v3
         with:
+          args: --coverage-text
           bootstrap: vendor/autoload.php
-          args: --coverage-text --test-suffix=Test.php tests
+          configuration: phpunit.xml
           php_version: '8.3'
