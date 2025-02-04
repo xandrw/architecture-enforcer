@@ -15,16 +15,12 @@
     },
     "autoload": {
         "psr-4": {
-            "Xandrw\\ArchitectureEnforcer\\": "src/"
+            "Xandrw\\ArchitectureEnforcer\\": "src/",
+            "Xandrw\\ArchitectureEnforcer\\Tests\\": "tests/"
         }
     },
     "require-dev": {
         "phpunit/phpunit": "^9.5"
-    },
-    "autoload-dev": {
-        "psr-4": {
-            "Xandrw\\ArchitectureEnforcer\\Tests\\": "tests/"
-        }
     },
     "bin": ["enforcer"]
 }
