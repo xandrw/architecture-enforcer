@@ -14,4 +14,4 @@ jobs:
       - uses: php-actions/composer@v6
       - uses: php-actions/phpunit@v3
         with:
-          args: --coverage-text
+          args: --coverage-text tests
