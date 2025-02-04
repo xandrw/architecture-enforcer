@@ -14,9 +14,9 @@ jobs:
 
       - uses: php-actions/composer@v6
 
-      - name:
+      - name: PHPUnit Tests
         uses: php-actions/phpunit@v3
         with:
           bootstrap: vendor/autoload.php
           args: --coverage-text --test-suffix=Test.php tests
-          php_version: '8.1'
+          php_version: '8.3'
