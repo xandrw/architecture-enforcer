@@ -49,6 +49,29 @@ return [
 ];
 ```
 
+**Or if you prefer yaml:**
+```yaml
+# project-root/config/architecture.yml/yaml
+architecture:
+    'App\Presentation':
+        - 'App\Infrastructure'
+        - 'App\Application'
+        - 'App\Domain'
+    'App\Infrastructure':
+        - 'App\Application'
+        - 'App\Domain'
+    'App\Application':
+        - 'App\Domain'
+    'App\Domain': []
+ignore:
+    - bin
+    - config
+    - public
+    - tests
+    - var
+    - vendor
+```
+
 ---
 
 ### Usage
