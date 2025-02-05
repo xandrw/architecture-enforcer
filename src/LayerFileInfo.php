@@ -5,6 +5,8 @@ namespace Xandrw\ArchitectureEnforcer;
 use ReflectionClass;
 use ReflectionFunction;
 use Symfony\Component\Finder\SplFileInfo;
+use Xandrw\ArchitectureEnforcer\Exceptions\ArchitectureException;
+use Xandrw\ArchitectureEnforcer\Invokers\GetUseStatements;
 
 class LayerFileInfo
 {
@@ -45,14 +47,14 @@ class LayerFileInfo
     {
         if ($namespace === null) return null;
 
-        $arrayNamespace = explode('\\', $namespace);
-        $root = $arrayNamespace[0];
-        $layer = $arrayNamespace[1] ?? null;
+        foreach (array_keys($this->architecture) as $layer) {
+            if (str_starts_with($namespace, $layer)) return $layer;
+        }
 
-        return $layer !== null ? "$root\\$layer" : $root;
+        return null;
     }
 
-    public function getMarkedUseStatements(): array
+    public function getUseStatementsWithLines(): array
     {
         return (new GetUseStatements())($this->fileContents);
     }
@@ -64,7 +66,7 @@ class LayerFileInfo
 
         $errors = [];
 
-        foreach ($this->getMarkedUseStatements() as [$useStatement, $line]) {
+        foreach ($this->getUseStatementsWithLines() as [$useStatement, $line]) {
             if ($this->canUseNamespace($useStatement)) continue;
 
             $errors[] = new ArchitectureException($this, $line, $useStatement);

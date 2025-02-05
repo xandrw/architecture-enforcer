@@ -4,7 +4,7 @@ namespace Xandrw\ArchitectureEnforcer\Tests;
 
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Finder\SplFileInfo;
-use Xandrw\ArchitectureEnforcer\ArchitectureException;
+use Xandrw\ArchitectureEnforcer\Exceptions\ArchitectureException;
 use Xandrw\ArchitectureEnforcer\LayerFileInfo;
 
 class LayerFileInfoTest extends TestCase
@@ -26,7 +26,7 @@ class LayerFileInfoTest extends TestCase
         $fileContents = '<?php namespace Test\\Layer\\Path;';
         $fileInfoMock = $this->createMock(SplFileInfo::class);
         $fileInfoMock->expects($this->once())->method('getContents')->willReturn($fileContents);
-        $layerFileInfo = new LayerFileInfo($fileInfoMock, []);
+        $layerFileInfo = new LayerFileInfo($fileInfoMock, ['Test\\Layer' => []]);
 
         $this->assertSame('Test\\Layer\\Path', $layerFileInfo->getNamespace());
         $this->assertSame('Test\\Layer', $layerFileInfo->getLayer());
@@ -45,7 +45,7 @@ class LayerFileInfoTest extends TestCase
     }
 
     /** @test */
-    public function getMarkedUseStatements(): void
+    public function getUseStatementsWithLines(): void
     {
         $fileContents = <<<'PHP'
             <?php
@@ -57,7 +57,7 @@ class LayerFileInfoTest extends TestCase
         $fileInfoMock = $this->createMock(SplFileInfo::class);
         $fileInfoMock->expects($this->once())->method('getContents')->willReturn($fileContents);
         $layerFileInfo = new LayerFileInfo($fileInfoMock, []);
-        $useStatements = $layerFileInfo->getMarkedUseStatements();
+        $useStatements = $layerFileInfo->getUseStatementsWithLines();
 
         $this->assertCount(3, $useStatements);
 
@@ -74,7 +74,7 @@ class LayerFileInfoTest extends TestCase
         $fileInfoMock->expects($this->once())->method('getContents')->willReturn($fileContents);
         $layerFileInfo = new LayerFileInfo($fileInfoMock, []);
 
-        $this->assertEmpty($layerFileInfo->getMarkedUseStatements());
+        $this->assertEmpty($layerFileInfo->getUseStatementsWithLines());
     }
 
     /** @test */
