@@ -18,9 +18,9 @@ use Xandrw\ArchitectureEnforcer\LayerFileInfo;
 
 /** @SuppressUnused */
 #[AsCommand(
-    name: 'validate:architecture',
+    name: 'validate',
     description: 'Validate Architecture layers based on config',
-    aliases: ['v:a']
+    aliases: ['v']
 )]
 class ValidateArchitectureCommand extends Command
 {
@@ -33,7 +33,6 @@ class ValidateArchitectureCommand extends Command
             shortcut: 'i',
             mode: InputArgument::IS_ARRAY,
             description: 'Comma-separated list of ignored paths from the current directory (e.g.: vendor,var,tests)',
-            default: [],
         );
     }
 
