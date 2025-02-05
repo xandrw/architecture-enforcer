@@ -1,9 +1,9 @@
 # PHP Architecture Enforcer
 
 The PHP Architecture Enforcer is a simple command-line tool that recursively scans a directory,
-analyzes your PHP files for `namespace` and `use` statements, and checks them against a defined architecture configuration.
-If a file uses a `dependency` that is outside the allowed scope for its layer, the command will stop execution and display
-an error, including the file `name` and the offending `line` number.
+analyzes your PHP files for `namespace` and `use` statements, and checks them against a defined `architecture` config.
+If a file uses a `dependency` that is outside the allowed `scope` for its `layer`, the command will scan all files,
+collect any errors along with their corresponding file names and offending line numbers, and then display all the errors together.
 
 ---
 
@@ -78,7 +78,7 @@ ignore:
 After you've configured your architecture, you'll need to `cd` to your project's `root` directory.
 Let's say your project `root` is at `/Users/your-user/project-root` and has a `src` directory where your application files are located.
 ```shell
-./vendor/bin/enforcer validate:architecture src config/architecture.php
+./vendor/bin/enforcer validate:architecture src config/architecture.php/yml/yaml
 ```
 
 #### Command Signature
@@ -103,6 +103,7 @@ Scanned: /Users/your-user/project-root/src/Application/SomeApplicationClass.php
 Scanned: /Users/your-user/project-root/src/Infrastructure/SomeInfrastructureClass.php
 Scanned: /Users/your-user/project-root/src/Domain/Entities/SomeDomainEntity.php
 Scanned: /Users/your-user/project-root/src/Presentation/Endpoints/SomePresentationEndpoint.php
+No architecture issues found
 ```
 
 #### Error Scan

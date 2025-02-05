@@ -89,6 +89,7 @@ class ValidateArchitectureCommand extends Command
             return Command::FAILURE;
         }
 
+        $output->writeln('<info>No architecture issues found</info>');
         return Command::SUCCESS;
     }
 
