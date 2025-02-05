@@ -22,6 +22,6 @@ require ENFORCER_COMPOSER_INSTALL;
 use Symfony\Component\Console\Application;
 use Xandrw\ArchitectureEnforcer\ValidateArchitectureCommand;
 
-$application = new Application('architecture-enforcer');
+$application = new Application('xandrw/architecture-enforcer');
 $application->add(new ValidateArchitectureCommand());
 $application->run();

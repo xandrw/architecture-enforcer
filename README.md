@@ -104,7 +104,7 @@ class SomeDomainEntity
 ```
 Scanning directory: /Users/your-user/project-root/src
 Failed: /Users/your-user/project-root/src/Domain/Entities/SomeDomainEntity.php
-App\Domain\Entities\SomeDomainEntity:44 cannot use App\Infrastructure\SomeInfrastructureClass -> Check architecture config
+App\Domain\Entities\SomeDomainEntity:44 cannot use App\Infrastructure\SomeInfrastructureClass
 ```
 
 ---
