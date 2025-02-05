@@ -79,6 +79,11 @@ Let's say your project `root` is at `/Users/your-user/project-root` and has a `s
 ./vendor/bin/enforcer validate src config/architecture.php/yml/yaml
 ```
 
+**With ignored paths**
+```shell
+./vendor/bin/enforcer validate -i Domain/Interfaces,Infrastructure src config/architecture.php/yml/yaml
+```
+
 #### Command Signature
 ```
 ./vendor/bin/enforcer validate [options] [--] <path-to-source> <path-to-config>

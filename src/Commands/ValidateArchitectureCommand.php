@@ -135,6 +135,6 @@ class ValidateArchitectureCommand extends Command
             $ignoreOptionValue = explode(',', $ignoreOptionValue);
         }
 
-        return array_unique([...$ignoreOptionValue, ...$config['ignore'] ?? []]);
+        return array_unique([...$ignoreOptionValue ?? [], ...$config['ignore'] ?? []]);
     }
 }
