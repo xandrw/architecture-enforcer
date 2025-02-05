@@ -12,6 +12,11 @@ Install the tool as a development dependency using Composer:
 composer require --dev xandrw/architecture-enforcer
 ```
 
+Or you can install it globally
+```shell
+composer global require xandrw/architecture-enforcer
+```
+
 ---
 
 ### Configuration
@@ -137,4 +142,3 @@ App\Domain\Entities\SomeDomainEntity:6 cannot use App\Infrastructure\SomeInfrast
 
 ### Additional Information
 - **Tests:** for more details, refer to the `tests` included with the project.
-- **Work in Progress:** This tool is a work in progress (`WIP`), but can be used as is.

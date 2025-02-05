@@ -13,7 +13,9 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Finder\SplFileInfo;
 use Symfony\Component\Yaml\Yaml;
-use Xandrw\ArchitectureEnforcer\ArchitectureException;
+use Xandrw\ArchitectureEnforcer\Exceptions\ArchitectureException;
+use Xandrw\ArchitectureEnforcer\Exceptions\ConfigException;
+use Xandrw\ArchitectureEnforcer\Invokers\ValidateArchitectureConfig;
 use Xandrw\ArchitectureEnforcer\LayerFileInfo;
 
 /** @SuppressUnused */
@@ -48,6 +50,13 @@ class ValidateArchitectureCommand extends Command
         $config = $this->getConfig($configArgument);
         $architecture = $config['architecture']
             ?? throw new LogicException('architecture key not set in configuration file');
+
+        try {
+            (new ValidateArchitectureConfig())($architecture);
+        } catch (ConfigException $e) {
+            $output->writeln("<error>{$e->getMessage()}</error>");
+            return Command::FAILURE;
+        }
 
         $source = $input->getArgument('source');
         $ignore = $this->getIgnoredPaths($input, $config);
