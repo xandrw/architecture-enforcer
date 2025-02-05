@@ -1,8 +1,8 @@
 # PHP Architecture Enforcer
-The PHP Architecture Enforcer is a simple command-line tool that recursively scans a directory,
-analyzes your PHP files for `namespace` and `use` statements, and checks them against a defined `architecture` config.
-If a file uses a `dependency` that is outside the allowed `scope` for its `layer`, the command will scan all files,
-collect any errors along with their corresponding file names and offending line numbers, and then display all the errors together.
+A simple command-line tool that recursively scans a directory, analyzes your PHP files
+for `namespace` and `use` statements, and checks them against a defined `architecture` config.
+If a file uses a `dependency` that is outside the allowed `scope` for its `layer`, the command will continue scanning,
+collect any errors along with their file names and offending line numbers, then display all the errors.
 
 ---
 
@@ -73,20 +73,20 @@ ignore:
 ---
 
 ### Usage
-After you've configured your architecture, you'll need to `cd` to your project's `root` directory.
-Let's say your project `root` is at `/Users/your-user/project-root` and has a `src` directory where your application files are located.
+After you've configured your architecture, let's say your project `root` is at
+`/Users/your-user/project-root` and has a `src` directory where your application files are located.
 ```shell
-./vendor/bin/enforcer validate src config/architecture.php/yml/yaml
+./vendor/bin/enforcer validate /Users/your-user/project-root/src /Users/your-user/project-root/config/architecture.php/yml/yaml
 ```
 
 **With ignored paths**
 ```shell
-./vendor/bin/enforcer validate -i Domain/Interfaces,Infrastructure src config/architecture.php/yml/yaml
+./vendor/bin/enforcer validate -i Domain/Interfaces,Infrastructure /Users/your-user/project-root/src /Users/your-user/project-root/config/architecture.php/yml/yaml
 ```
 
 #### Command Signature
 ```
-./vendor/bin/enforcer validate [options] [--] <path-to-source> <path-to-config>
+./vendor/bin/enforcer validate [--ignore/-i] [--] <path-to-source> <path-to-config>
 ```
 
 **Or you can run:**
@@ -130,11 +130,11 @@ class SomeDomainEntity
 ```
 Scanning directory: /Users/your-user/project-root/src
 Failed: /Users/your-user/project-root/src/Domain/Entities/SomeDomainEntity.php
-App\Domain\Entities\SomeDomainEntity:44 cannot use App\Infrastructure\SomeInfrastructureClass
+App\Domain\Entities\SomeDomainEntity:6 cannot use App\Infrastructure\SomeInfrastructureClass
 ```
 
 ---
 
 ### Additional Information
-- **Tests:** for more examples and detailed usage, refer to the tests included with the project.
-- **Work in Progress:** This tool is a work in progress (WIP), and further improvements or features may be added over time.
+- **Tests:** for more details, refer to the `tests` included with the project.
+- **Work in Progress:** This tool is a work in progress (`WIP`), but can be used as is.
