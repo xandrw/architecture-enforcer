@@ -79,7 +79,6 @@ class ValidateArchitectureCommand extends Command
             } catch (Exception $e) {
                 $output->writeln('<error>Failed with exception</error>');
                 $output->writeln("<error>$e</error>");
-                $this->printValidationErrors($errors, $output);
                 return Command::FAILURE;
             }
         }
