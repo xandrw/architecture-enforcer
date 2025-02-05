@@ -10,7 +10,7 @@ an error, including the file `name` and the offending `line` number.
 ### Installation
 Install the tool as a development dependency using Composer:
 ```shell
-    composer require --dev xandrw/architecture-enforcer
+composer require --dev xandrw/architecture-enforcer
 ```
 
 ---
@@ -55,18 +55,18 @@ return [
 After you've configured your architecture, you'll need to `cd` to your project's `root` directory.
 Let's say your project `root` is at `/Users/your-user/project-root` and has a `src` directory where your application files are located.
 ```shell
-  ./enforcer validate:architecture src config/architecture.php
+./vendor/bin/enforcer validate:architecture src config/architecture.php
 ```
 
 #### Command Signature
 
 ```
-./enforcer validate:architecture [options] [--] <path-to-source> <path-to-config>
+./vendor/bin/enforcer validate:architecture [options] [--] <path-to-source> <path-to-config>
 ```
 
 **Or you can run:**
 ```shell
-    ./enforcer validate:architecture -h
+./vendor/bin/enforcer validate:architecture -h
 ```
 
 ---
