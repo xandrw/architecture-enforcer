@@ -2,7 +2,7 @@
 
 namespace Xandrw\ArchitectureEnforcer;
 
-class GetFileUseStatements
+class GetUseStatements
 {
     public function __invoke(string $fileContents): array
     {

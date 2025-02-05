@@ -54,7 +54,7 @@ class LayerFileInfo
 
     public function getMarkedUseStatements(): array
     {
-        return (new GetFileUseStatements())($this->fileContents);
+        return (new GetUseStatements())($this->fileContents);
     }
 
     /** @return ArchitectureException[] */
