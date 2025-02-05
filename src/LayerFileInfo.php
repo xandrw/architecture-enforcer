@@ -9,6 +9,8 @@ use Symfony\Component\Finder\SplFileInfo;
 class LayerFileInfo
 {
     private string $fileContents;
+    private ?string $namespace = null;
+    private ?string $layer = null;
 
     public function __construct(public readonly SplFileInfo $fileInfo, public readonly array $architecture)
     {
@@ -22,15 +24,21 @@ class LayerFileInfo
 
     public function getLayer(): ?string
     {
-        return $this->getNamespaceLayer($this->getNamespace());
+        if ($this->layer !== null) {
+            return $this->layer;
+        }
+        return $this->layer = $this->getNamespaceLayer($this->getNamespace());
     }
 
     public function getNamespace(): ?string
     {
-        if (preg_match('/namespace\s+(?<namespace>[^;]+);/', $this->fileContents, $matches)) {
-            return trim($matches['namespace']);
+        if ($this->namespace !== null) {
+            return $this->namespace;
         }
-        return null;
+        if (preg_match('/namespace\s+(?<namespace>[^;]+);/', $this->fileContents, $matches)) {
+            return $this->namespace = trim($matches['namespace']);
+        }
+        return $this->namespace = null;
     }
 
     public function getNamespaceLayer(?string $namespace): ?string
