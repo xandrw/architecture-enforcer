@@ -3,6 +3,7 @@
 namespace Xandrw\ArchitectureEnforcer;
 
 use Exception;
+use InvalidArgumentException;
 use LogicException;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
@@ -11,6 +12,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Finder\SplFileInfo;
+use Symfony\Component\Yaml\Yaml;
 
 /** @SuppressUnused */
 #[AsCommand(
@@ -42,7 +44,7 @@ class ValidateArchitectureCommand extends Command
             return Command::FAILURE;
         }
 
-        $config = require $configArgument;
+        $config = $this->getConfig($configArgument);
         $architecture = $config['architecture']
             ?? throw new LogicException('architecture key not set in configuration file');
 
@@ -88,15 +90,18 @@ class ValidateArchitectureCommand extends Command
         return Command::SUCCESS;
     }
 
-    private function printValidationErrors(array $errors, OutputInterface $output): void
+    private function getConfig(string $configPath): array
     {
-        foreach ($errors as $fileName => $validationErrors) {
-            $output->writeln("<error>Failed:</error> <comment>$fileName</comment>");
-            /** @var ArchitectureException $validationError */
-            foreach ($validationErrors as $validationError) {
-                $output->writeln("<error>{$validationError->getMessage()}</error>");
-            }
+        $extension = strtolower(pathinfo($configPath, PATHINFO_EXTENSION));
+
+        if (in_array($extension, ['yml', 'yaml'], true)) {
+            return (array) Yaml::parseFile($configPath);
         }
+
+        if ($extension === 'php') {
+            return require $configPath;
+        }
+        throw new InvalidArgumentException("Unsupported config file extension: $extension");
     }
 
     /** @return SplFileInfo[] */
@@ -108,6 +113,17 @@ class ValidateArchitectureCommand extends Command
             ->ignoreDotFiles(true)
             ->name('*.php');
         return iterator_to_array($finder);
+    }
+
+    private function printValidationErrors(array $errors, OutputInterface $output): void
+    {
+        foreach ($errors as $fileName => $validationErrors) {
+            $output->writeln("<error>Failed:</error> <comment>$fileName</comment>");
+            /** @var ArchitectureException $validationError */
+            foreach ($validationErrors as $validationError) {
+                $output->writeln("<error>{$validationError->getMessage()}</error>");
+            }
+        }
     }
 
     private function getIgnoredPaths(InputInterface $input, array $config): array
