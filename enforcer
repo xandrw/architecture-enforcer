@@ -1,21 +1,21 @@
 #!/usr/bin/env php
 <?php
 
-$composerLocations = [
+$autoloadPossiblePaths = [
     __DIR__ . '/../../autoload.php',
     __DIR__ . '/../vendor/autoload.php',
     __DIR__ . '/vendor/autoload.php',
 ];
 
-foreach ($composerLocations as $key => $autoloadFile) {
-    if (file_exists($autoloadFile)) {
-        define('ENFORCER_COMPOSER_INSTALL', $autoloadFile);
+foreach ($autoloadPossiblePaths as $autoloadPossiblePath) {
+    if (file_exists($autoloadPossiblePath)) {
+        define('ENFORCER_COMPOSER_INSTALL', $autoloadPossiblePath);
         break;
     }
 }
 
-unset($composerLocations);
-unset($autoloadFile);
+unset($autoloadPossiblePaths);
+unset($autoloadPossiblePath);
 
 require ENFORCER_COMPOSER_INSTALL;
 
