@@ -1,7 +1,23 @@
 #!/usr/bin/env php
 <?php
 
-require __DIR__ . '/vendor/autoload.php';
+$composerLocations = [
+    __DIR__ . '/../../autoload.php',
+    __DIR__ . '/../vendor/autoload.php',
+    __DIR__ . '/vendor/autoload.php',
+];
+
+foreach ($composerLocations as $key => $autoloadFile) {
+    if (file_exists($autoloadFile)) {
+        define('ENFORCER_COMPOSER_INSTALL', $autoloadFile);
+        break;
+    }
+}
+
+unset($composerLocations);
+unset($autoloadFile);
+
+require ENFORCER_COMPOSER_INSTALL;
 
 use Symfony\Component\Console\Application;
 use Xandrw\ArchitectureEnforcer\ValidateArchitectureCommand;
