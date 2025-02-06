@@ -200,8 +200,6 @@ class LayerFileInfoTest extends TestCase
         $fileInfoMock->expects($this->once())->method('getContents')->willReturn($fileContents);
         $validationErrors = (new LayerFileInfo($fileInfoMock, $architecture))->validate();
 
-        var_dump($validationErrors);
-
         $this->assertEmpty($validationErrors);
     }
 
