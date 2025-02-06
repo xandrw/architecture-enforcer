@@ -78,7 +78,7 @@ class LayerFileInfoTest extends TestCase
     }
 
     /** @test */
-    public function validateReturnsErrorIfUsedLayerNotInChildren(): void
+    public function errorIfUsedLayerNotInChildren(): void
     {
         $fileContents = <<<'PHP'
             <?php
@@ -101,7 +101,7 @@ class LayerFileInfoTest extends TestCase
     }
 
     /** @test */
-    public function validateReturnsErrorIfStrictAndUsedLayerNotInChildren(): void
+    public function errorIfStrictAndUsedLayerNotInChildren(): void
     {
         $fileContents = <<<'PHP'
             <?php
@@ -122,7 +122,7 @@ class LayerFileInfoTest extends TestCase
     }
 
     /** @test */
-    public function validateSuccessIfStrictAndUsedLayerSameAsCurrent(): void
+    public function successIfStrictAndUsedLayerSameAsCurrent(): void
     {
         $fileContents = <<<'PHP'
             <?php
@@ -138,7 +138,7 @@ class LayerFileInfoTest extends TestCase
     }
 
     /** @test */
-    public function validateSuccessIfNotStrictAndUsedLayerOutsideOfArchitecture(): void
+    public function successIfNotStrictAndUsedLayerOutsideOfArchitecture(): void
     {
         $fileContents = <<<'PHP'
             <?php
@@ -154,7 +154,7 @@ class LayerFileInfoTest extends TestCase
     }
 
     /** @test */
-    public function validateSuccessIfStrictAndUsedLayerPhpCore(): void
+    public function successIfStrictAndUsedLayerPhpCore(): void
     {
         $fileContents = <<<'PHP'
             <?php
@@ -171,7 +171,7 @@ class LayerFileInfoTest extends TestCase
     }
 
     /** @test */
-    public function validateSuccessIfStrictAndUsedLayerNotInArchitectureButInChildLayers(): void
+    public function successIfStrictAndUsedLayerNotInArchitectureButInChildLayers(): void
     {
         $fileContents = <<<'PHP'
             <?php
@@ -187,7 +187,26 @@ class LayerFileInfoTest extends TestCase
     }
 
     /** @test */
-    public function validateSuccessIfNoNamespace(): void
+    public function successIfStrictAndUsedLayerHasAliasAndIsInChildLayers(): void
+    {
+        $fileContents = <<<'PHP'
+            <?php
+            namespace Test\LayerA;
+            use SomeOther\Layer\Namespace as Soln;
+            $className = Soln\SubClass::class;
+        PHP;
+        $architecture = ['Test\\LayerA' => ['Test\\LayerA', 'SomeOther', 'Soln']];
+        $fileInfoMock = $this->createMock(SplFileInfo::class);
+        $fileInfoMock->expects($this->once())->method('getContents')->willReturn($fileContents);
+        $validationErrors = (new LayerFileInfo($fileInfoMock, $architecture))->validate();
+
+        var_dump($validationErrors);
+
+        $this->assertEmpty($validationErrors);
+    }
+
+    /** @test */
+    public function successIfNoNamespace(): void
     {
         $fileContents = <<<'PHP'
             <?php
@@ -208,7 +227,7 @@ class LayerFileInfoTest extends TestCase
     }
 
     /** @test */
-    public function validateSuccessIfNoUseStatements(): void
+    public function successIfNoUseStatements(): void
     {
         $fileContents = '<?php namespace Test\LayerA;';
         $architecture = [
