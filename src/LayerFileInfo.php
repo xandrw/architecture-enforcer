@@ -51,7 +51,7 @@ class LayerFileInfo
             if (str_starts_with($namespace, $layer)) return $layer;
         }
 
-        return null;
+        return $namespace;
     }
 
     public function getUseStatementsWithLines(): array
@@ -93,7 +93,9 @@ class LayerFileInfo
 
         if (!$strict && !array_key_exists($usedLayer, $this->architecture)) return true;
 
-        if (in_array($usedLayer, $this->architecture[$thisLayer] ?? [], true)) return true;
+        foreach ($this->architecture[$thisLayer] as $childLayer) {
+            if (str_starts_with($usedLayer, $childLayer)) return true;
+        }
 
         if ($strict && !array_key_exists($usedLayer, $this->architecture)) {
             return $this->isInternal($usedUseStatement);

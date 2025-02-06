@@ -26,9 +26,9 @@ class ValidateArchitectureConfig
      * and throws a ConfigException with the explanation message
      * @throws ConfigException
      */
-    private function validateLayerConflicts(string $layer, array $processedLayers): void
+    private function validateLayerConflicts(string $layer, array $layers): void
     {
-        foreach ($processedLayers as $validLayer) {
+        foreach ($layers as $validLayer) {
             if (str_starts_with($layer, $validLayer) || str_starts_with($validLayer, $layer)) {
                 throw new ConfigException("Layer conflict between $validLayer and $layer");
             }

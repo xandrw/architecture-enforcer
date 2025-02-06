@@ -171,6 +171,22 @@ class LayerFileInfoTest extends TestCase
     }
 
     /** @test */
+    public function validateSuccessIfStrictAndUsedLayerNotInArchitectureButInChildLayers(): void
+    {
+        $fileContents = <<<'PHP'
+            <?php
+            namespace Test\LayerA;
+            use Some\Other\Layer\Namespace;
+        PHP;
+        $architecture = ['Test\\LayerA' => ['Test\\LayerA', 'Some']];
+        $fileInfoMock = $this->createMock(SplFileInfo::class);
+        $fileInfoMock->expects($this->once())->method('getContents')->willReturn($fileContents);
+        $validationErrors = (new LayerFileInfo($fileInfoMock, $architecture))->validate();
+
+        $this->assertEmpty($validationErrors);
+    }
+
+    /** @test */
     public function validateSuccessIfNoNamespace(): void
     {
         $fileContents = <<<'PHP'
