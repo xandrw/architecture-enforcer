@@ -92,7 +92,7 @@ class ValidateArchitectureCommand extends Command
         }
 
         if (!empty($errors)) {
-            $this->printValidationErrors($errors, $output);
+            $this->outputValidationErrors($output, $errors);
             return Command::FAILURE;
         }
 
@@ -125,7 +125,7 @@ class ValidateArchitectureCommand extends Command
         return iterator_to_array($finder);
     }
 
-    private function printValidationErrors(array $errors, OutputInterface $output): void
+    private function outputValidationErrors(OutputInterface $output, array $errors): void
     {
         foreach ($errors as $fileName => $validationErrors) {
             $output->writeln("<error>Failed:</error> <comment>$fileName</comment>");

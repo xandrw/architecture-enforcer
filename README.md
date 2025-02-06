@@ -43,7 +43,7 @@ return [
         // A layer key that has itself contained in the child array
         // will be marked as strict. Any dependency not referenced
         // in the children array, not part of the current layer or
-        // not a PHP Core member will error 
+        // not a PHP Core member will result in an error
         // 'App\\Domain' => ['App\\Domain'],
         'App\\Domain' => [],
     ],
@@ -56,23 +56,23 @@ return [
 ```yaml
 # project-root/config/architecture.yml/yaml
 architecture:
-    'App\Presentation':
-        - 'App\Infrastructure'
-        - 'App\Application'
-        - 'App\Domain'
-    'App\Infrastructure':
-        - 'App\Application'
-        - 'App\Domain'
-    'App\Application':
-        - 'App\Domain'
-    'App\Domain': []
+  'App\Presentation':
+    - 'App\Infrastructure'
+    - 'App\Application'
+    - 'App\Domain'
+  'App\Infrastructure':
+    - 'App\Application'
+    - 'App\Domain'
+  'App\Application':
+    - 'App\Domain'
+  'App\Domain': []
 ignore:
-    - bin
-    - config
-    - public
-    - tests
-    - var
-    - vendor
+  - bin
+  - config
+  - public
+  - tests
+  - var
+  - vendor
 ```
 
 ---
@@ -126,7 +126,8 @@ use App\Infrastructure\SomeInfrastructureClass;
 
 class SomeDomainEntity
 {
-    public function __construct() {
+    public function __construct()
+    {
         $class = SomeInfrastructureClass::class;
     }
 }
@@ -142,3 +143,10 @@ App\Domain\Entities\SomeDomainEntity:6 cannot use App\Infrastructure\SomeInfrast
 
 ### Additional Information
 - **Tests:** for more details, refer to the `tests` included with the project.
+
+---
+
+### Features
+- [x] `validate` command that validates your application files against the config
+- [ ] `--only/-o` optional parameter for `validate` which would do the opposite of `--ignore/-i`
+- [ ] `debug` command that shows all files, their namespace, the layer they belong to and the used layers/namespaces
