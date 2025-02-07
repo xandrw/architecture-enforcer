@@ -106,11 +106,11 @@ After you've configured your architecture, let's say your project `root` is at
 #### Successful Scan
 ```
 Scanning directory: /Users/your-user/project-root/src
-Scanned: /Users/your-user/project-root/src/Application/SomeApplicationClass.php
-Scanned: /Users/your-user/project-root/src/Infrastructure/SomeInfrastructureClass.php
-Scanned: /Users/your-user/project-root/src/Domain/Entities/SomeDomainEntity.php
-Scanned: /Users/your-user/project-root/src/Presentation/Endpoints/SomePresentationEndpoint.php
-No architecture issues found
+Scanning [OK] App\Application\SomeApplicationClass
+Scanning [OK] App\Infrastructure\SomeInfrastructureClass
+Scanning [OK] App\Domain\Entities\SomeDomainEntity
+Scanning [OK] App\Presentation\Endpoints\SomePresentationEndpoint
+No issues found (time: 4ms, memory: 4MB)
 ```
 
 #### Error Scan
@@ -135,8 +135,9 @@ class SomeDomainEntity
 
 ```
 Scanning directory: /Users/your-user/project-root/src
-Failed: /Users/your-user/project-root/src/Domain/Entities/SomeDomainEntity.php
+Scanning [ERROR] App\Domain\Entities\SomeDomainEntity
 App\Domain\Entities\SomeDomainEntity:6 cannot use App\Infrastructure\SomeInfrastructureClass
+Issues found (time: 4ms, memory: 4MB)
 ```
 
 ---
@@ -146,7 +147,13 @@ App\Domain\Entities\SomeDomainEntity:6 cannot use App\Infrastructure\SomeInfrast
 
 ---
 
-### Features
+
+
+### Roadmap
 - [x] `validate` command that validates your application files against the config
+- [x] Execution time and memory used
+- [x] Refactor processes to OOP
 - [ ] `--only/-o` optional parameter for `validate` which would do the opposite of `--ignore/-i`
+- [ ] `--no-circular` optional parameter for `validate` that restricts circular dependencies between layers
+- [ ] `--pure` Pure mode, where the defined architecture layers must exist, meaning the directory structure should be there
 - [ ] `debug` command that shows all files, their namespace, the layer they belong to and the used layers/namespaces

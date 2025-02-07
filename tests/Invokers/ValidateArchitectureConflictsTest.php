@@ -2,11 +2,11 @@
 
 namespace Xandrw\ArchitectureEnforcer\Tests\Invokers;
 
+use LogicException;
 use PHPUnit\Framework\TestCase;
-use Xandrw\ArchitectureEnforcer\Exceptions\ConfigException;
-use Xandrw\ArchitectureEnforcer\Invokers\ValidateArchitectureConfig;
+use Xandrw\ArchitectureEnforcer\Invokers\ValidateArchitectureConflicts;
 
-class ValidateArchitectureConfigTest extends TestCase
+class ValidateArchitectureConflictsTest extends TestCase
 {
     /**
      * @test
@@ -14,9 +14,9 @@ class ValidateArchitectureConfigTest extends TestCase
      */
     public function invoke(array $architectureConfig, bool $fail): void
     {
-        if ($fail) $this->expectException(ConfigException::class);
+        if ($fail) $this->expectException(LogicException::class);
 
-        (new ValidateArchitectureConfig())($architectureConfig);
+        (new ValidateArchitectureConflicts())($architectureConfig);
 
         $this->addToAssertionCount(1);
     }

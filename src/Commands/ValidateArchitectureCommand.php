@@ -10,13 +10,10 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Finder\Finder;
-use Symfony\Component\Finder\SplFileInfo;
+use Symfony\Component\Stopwatch\Stopwatch;
 use Symfony\Component\Yaml\Yaml;
-use Xandrw\ArchitectureEnforcer\Exceptions\ArchitectureException;
-use Xandrw\ArchitectureEnforcer\Exceptions\ConfigException;
-use Xandrw\ArchitectureEnforcer\Invokers\ValidateArchitectureConfig;
-use Xandrw\ArchitectureEnforcer\LayerFileInfo;
+use Xandrw\ArchitectureEnforcer\Architecture;
+use Xandrw\ArchitectureEnforcer\LayerFilesScanner;
 
 /** @SuppressUnused */
 #[AsCommand(
@@ -26,6 +23,8 @@ use Xandrw\ArchitectureEnforcer\LayerFileInfo;
 )]
 class ValidateArchitectureCommand extends Command
 {
+    private bool $failed = false;
+
     protected function configure(): void
     {
         $this->addArgument(name: 'source', mode: InputArgument::REQUIRED, description: 'Path to app files');
@@ -40,20 +39,18 @@ class ValidateArchitectureCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $configArgument = $input->getArgument('config');
+        $configPath = $input->getArgument('config');
 
-        if (is_file($configArgument) === false) {
-            $output->writeln("<error>'$configArgument' is not a file</error>");
+        if (is_file($configPath) === false) {
+            $output->writeln("<error>'$configPath' is not a file</error>");
             return Command::FAILURE;
         }
 
-        $config = $this->getConfig($configArgument);
-        $architecture = $config['architecture']
-            ?? throw new LogicException('architecture key not set in configuration file');
+        $config = $this->getConfig($configPath);
 
         try {
-            (new ValidateArchitectureConfig())($architecture);
-        } catch (ConfigException $e) {
+            $architecture = new Architecture($config);
+        } catch (LogicException $e) {
             $output->writeln("<error>{$e->getMessage()}</error>");
             return Command::FAILURE;
         }
@@ -61,43 +58,63 @@ class ValidateArchitectureCommand extends Command
         $source = $input->getArgument('source');
         $ignore = $this->getIgnoredPaths($input, $config);
 
-        if (in_array($source, $ignore)) {
-            $output->writeln("<error>Source '$source' exists in the ignored list</error>");
-            return Command::FAILURE;
-        }
-
-        $output->writeln("<info>Scanning directory:</info> <comment>$source</comment>");
-
         if (is_dir($source) === false) {
             $output->writeln("<error>'$source' is not a valid directory</error>");
             return Command::FAILURE;
         }
 
-        $errors = [];
-
-        foreach ($this->scanFiles($source, $ignore) as $scannedFile) {
-            try {
-                $validationErrors = (new LayerFileInfo($scannedFile, $architecture))->validate();
-
-                if (!empty($validationErrors)) {
-                    $errors = [...$errors, (string) $scannedFile => $validationErrors];
-                }
-
-                $output->writeln("<info>Scanned:</info> <comment>$scannedFile</comment>");
-            } catch (Exception $e) {
-                $output->writeln('<error>Failed with exception</error>');
-                $output->writeln("<error>$e</error>");
-                return Command::FAILURE;
-            }
-        }
-
-        if (!empty($errors)) {
-            $this->outputValidationErrors($output, $errors);
+        if (in_array($source, $ignore)) {
+            $output->writeln("<error>Source '$source' exists in the ignored list</error>");
             return Command::FAILURE;
         }
 
-        $output->writeln('<info>No architecture issues found</info>');
+        $output->writeln("Scanning directory: <comment>$source</comment>");
+
+        $stopwatch = new Stopwatch();
+        $stopwatch->start(self::class);
+        $scanner = new LayerFilesScanner($architecture);
+        $scannedLayerFiles = $scanner->scan($source, $ignore);
+
+        foreach ($scannedLayerFiles as $scannedLayerFile) {
+            $outputText = "Scanning <slot> <comment>$scannedLayerFile</comment>";
+            $validationErrors = $scannedLayerFile->validate();
+
+            if (empty($validationErrors)) {
+                $outputText = str_replace('<slot>', '<info>[OK]</info>', $outputText);
+                $output->writeln($outputText);
+                continue;
+            }
+
+            $this->failed = true;
+            $outputText = str_replace('<slot>', '<fg=red;options=bold>[ERROR]</>', $outputText);
+            $output->writeln($outputText);
+            $this->outputValidationErrors($output, $validationErrors);
+        }
+
+        $event = $stopwatch->stop(self::class);
+        $memoryUsed = $event->getMemory() / (1024 * 1024);
+
+        if ($this->failed) {
+            $output->writeln("<error>Issues found (time: {$event->getDuration()}ms, memory: {$memoryUsed}MB)</error>");
+            return Command::FAILURE;
+        }
+
+        $output->writeln("<info>No issues found (time: {$event->getDuration()}ms, memory: {$memoryUsed}MB)</info>");
+
         return Command::SUCCESS;
+    }
+
+
+    /**
+     * @param Exception[] $errors
+     */
+    private function outputValidationErrors(OutputInterface $output, array $errors): void
+    {
+        if (empty($errors)) return;
+
+        foreach ($errors as $error) {
+            $output->writeln("<error>{$error->getMessage()}</error>");
+        }
     }
 
     private function getConfig(string $configPath): array
@@ -108,32 +125,9 @@ class ValidateArchitectureCommand extends Command
             return (array) Yaml::parseFile($configPath);
         }
 
-        if ($extension === 'php') {
-            return require $configPath;
-        }
+        if ($extension === 'php') return require $configPath;
+
         throw new InvalidArgumentException("Unsupported config file extension: $extension");
-    }
-
-    /** @return SplFileInfo[] */
-    private function scanFiles(string $directory, array $ignoredPaths): array
-    {
-        $finder = (new Finder())
-            ->files()->in($directory)
-            ->exclude($ignoredPaths)
-            ->ignoreDotFiles(true)
-            ->name('*.php');
-        return iterator_to_array($finder);
-    }
-
-    private function outputValidationErrors(OutputInterface $output, array $errors): void
-    {
-        foreach ($errors as $fileName => $validationErrors) {
-            $output->writeln("<error>Failed:</error> <comment>$fileName</comment>");
-            /** @var ArchitectureException $validationError */
-            foreach ($validationErrors as $validationError) {
-                $output->writeln("<error>{$validationError->getMessage()}</error>");
-            }
-        }
     }
 
     private function getIgnoredPaths(InputInterface $input, array $config): array

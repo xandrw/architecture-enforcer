@@ -4,81 +4,61 @@ namespace Xandrw\ArchitectureEnforcer\Tests;
 
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Finder\SplFileInfo;
+use Xandrw\ArchitectureEnforcer\Architecture;
 use Xandrw\ArchitectureEnforcer\Exceptions\ArchitectureException;
-use Xandrw\ArchitectureEnforcer\LayerFileInfo;
+use Xandrw\ArchitectureEnforcer\LayerFile;
 
-class LayerFileInfoTest extends TestCase
+class LayerFileTest extends TestCase
 {
     /** @test */
-    public function getFileName(): void
-    {
-        $expectedFileName = 'test.php';
-        $fileInfoMock = $this->createMock(SplFileInfo::class);
-        $fileInfoMock->expects($this->once())->method('getFilename')->willReturn($expectedFileName);
-        $layerFileInfo = new LayerFileInfo($fileInfoMock, []);
-
-        $this->assertSame($expectedFileName, $layerFileInfo->getFileName());
-    }
-
-    /** @test */
-    public function getLayerAndNamespace(): void
-    {
-        $fileContents = '<?php namespace Test\\Layer\\Path;';
-        $fileInfoMock = $this->createMock(SplFileInfo::class);
-        $fileInfoMock->expects($this->once())->method('getContents')->willReturn($fileContents);
-        $layerFileInfo = new LayerFileInfo($fileInfoMock, ['Test\\Layer' => []]);
-
-        $this->assertSame('Test\\Layer\\Path', $layerFileInfo->getNamespace());
-        $this->assertSame('Test\\Layer', $layerFileInfo->getLayer());
-    }
-
-    /** @test */
-    public function getNullLayerAndNamespace(): void
+    public function initializeWithNullNamespaceAndLayer(): void
     {
         $fileContents = '<?php';
         $fileInfoMock = $this->createMock(SplFileInfo::class);
         $fileInfoMock->expects($this->once())->method('getContents')->willReturn($fileContents);
-        $layerFileInfo = new LayerFileInfo($fileInfoMock, []);
+        $layerFileInfo = new LayerFile($fileInfoMock, new Architecture(['architecture' => []]));
 
-        $this->assertNull($layerFileInfo->getNamespace());
-        $this->assertNull($layerFileInfo->getLayer());
+        $this->assertNull($layerFileInfo->namespace);
+        $this->assertNull($layerFileInfo->layer);
     }
 
     /** @test */
-    public function getUseStatementsWithLines(): void
+    public function initializeWithNullLayerIfNamespaceNotDefinedInArchitecture(): void
     {
-        $fileContents = <<<'PHP'
-            <?php
-            namespace Test\LayerA\Path;
-            use Test\LayerA\StatementA;
-            use Test\LayerB\StatementB;
-            $className = \Test\LayerC\StatementC::class;
-        PHP;
+        $fileContents = '<?php namespace Test\Namespace;';
         $fileInfoMock = $this->createMock(SplFileInfo::class);
         $fileInfoMock->expects($this->once())->method('getContents')->willReturn($fileContents);
-        $layerFileInfo = new LayerFileInfo($fileInfoMock, []);
-        $useStatements = $layerFileInfo->getUseStatementsWithLines();
+        $layerFileInfo = new LayerFile($fileInfoMock, new Architecture(['architecture' => []]));
 
-        $this->assertCount(3, $useStatements);
-
-        foreach ($useStatements as [$useStatement, $line]) {
-            $this->assertStringContainsString($useStatement, $fileContents);
-        }
+        $this->assertSame('Test\\Namespace', $layerFileInfo->namespace);
+        $this->assertNull($layerFileInfo->layer);
     }
 
     /** @test */
-    public function getEmptyUseStatements(): void
+    public function initializeWithNamespaceAndLayer(): void
     {
-        $fileContents = '<?php namespace Test\LayerA\Path;';
+        $fileContents = '<?php namespace Test\Namespace;';
         $fileInfoMock = $this->createMock(SplFileInfo::class);
         $fileInfoMock->expects($this->once())->method('getContents')->willReturn($fileContents);
-        $layerFileInfo = new LayerFileInfo($fileInfoMock, []);
+        $layerFileInfo = new LayerFile($fileInfoMock, new Architecture(['architecture' => ['Test' => []]]));
 
-        $this->assertEmpty($layerFileInfo->getUseStatementsWithLines());
+        $this->assertSame('Test\\Namespace', $layerFileInfo->namespace);
+        $this->assertSame('Test', (string) $layerFileInfo->layer);
     }
 
     /** @test */
-    public function errorIfUsedLayerNotInChildren(): void
+    public function getFileName(): void
+    {
+        $fileName = 'test.php';
+        $fileInfoMock = $this->createMock(SplFileInfo::class);
+        $fileInfoMock->expects($this->once())->method('getFilename')->willReturn($fileName);
+        $layerFileInfo = new LayerFile($fileInfoMock, new Architecture(['architecture' => []]));
+
+        $this->assertSame($fileName, $layerFileInfo->getFileName());
+    }
+
+    /** @test */
+    public function errorIfUsedNamespaceNotInSelfOrInArchitecture(): void
     {
         $fileContents = <<<'PHP'
             <?php
@@ -87,21 +67,23 @@ class LayerFileInfoTest extends TestCase
             use Test\LayerB\StatementB;
             $className = \Test\LayerC\StatementC::class;
         PHP;
-        $architecture = [
+        $architectureConfig = [
             'Test\\LayerA' => ['Test\\LayerB'],
             'Test\\LayerB' => [],
             'Test\\LayerC' => [],
         ];
+        $architecture = new Architecture(['architecture' => $architectureConfig]);
         $fileInfoMock = $this->createMock(SplFileInfo::class);
         $fileInfoMock->expects($this->once())->method('getContents')->willReturn($fileContents);
-        $validationErrors = (new LayerFileInfo($fileInfoMock, $architecture))->validate();
+
+        $validationErrors = (new LayerFile($fileInfoMock, $architecture))->validate();
 
         $this->assertCount(1, $validationErrors);
         $this->assertTrue($validationErrors[0] instanceof ArchitectureException);
     }
 
     /** @test */
-    public function errorIfStrictAndUsedLayerNotInChildren(): void
+    public function errorIfStrictAndUsedNamespaceNotInChildLayers(): void
     {
         $fileContents = <<<'PHP'
             <?php
@@ -109,52 +91,55 @@ class LayerFileInfoTest extends TestCase
             use Test\LayerA\StatementA;
             use Test\LayerB\StatementB;
         PHP;
-        $architecture = [
+        $architectureConfig = [
             'Test\\LayerA' => ['Test\\LayerA'],
             'Test\\LayerB' => [],
         ];
+        $architecture = new Architecture(['architecture' => $architectureConfig]);
         $fileInfoMock = $this->createMock(SplFileInfo::class);
         $fileInfoMock->expects($this->once())->method('getContents')->willReturn($fileContents);
-        $validationErrors = (new LayerFileInfo($fileInfoMock, $architecture))->validate();
+        $validationErrors = (new LayerFile($fileInfoMock, $architecture))->validate();
 
         $this->assertCount(1, $validationErrors);
         $this->assertTrue($validationErrors[0] instanceof ArchitectureException);
     }
 
     /** @test */
-    public function successIfStrictAndUsedLayerSameAsCurrent(): void
+    public function successIfStrictAndUsedNamespaceIsCurrentLayer(): void
     {
         $fileContents = <<<'PHP'
             <?php
             namespace Test\LayerA;
             use Test\LayerA\StatementA;
         PHP;
-        $architecture = ['Test\\LayerA' => ['Test\\LayerA']];
+        $architectureConfig = ['Test\\LayerA' => ['Test\\LayerA']];
+        $architecture = new Architecture(['architecture' => $architectureConfig]);
         $fileInfoMock = $this->createMock(SplFileInfo::class);
         $fileInfoMock->expects($this->once())->method('getContents')->willReturn($fileContents);
-        $validationErrors = (new LayerFileInfo($fileInfoMock, $architecture))->validate();
+        $validationErrors = (new LayerFile($fileInfoMock, $architecture))->validate();
 
         $this->assertEmpty($validationErrors);
     }
 
     /** @test */
-    public function successIfNotStrictAndUsedLayerOutsideOfArchitecture(): void
+    public function successIfNotStrictAndUsedNamespaceOutsideOfArchitecture(): void
     {
         $fileContents = <<<'PHP'
             <?php
             namespace Test\LayerA;
             use Some\Other\Location\StatementA;
         PHP;
-        $architecture = ['Test\\LayerA' => []];
+        $architectureConfig = ['Test\\LayerA' => []];
+        $architecture = new Architecture(['architecture' => $architectureConfig]);
         $fileInfoMock = $this->createMock(SplFileInfo::class);
         $fileInfoMock->expects($this->once())->method('getContents')->willReturn($fileContents);
-        $validationErrors = (new LayerFileInfo($fileInfoMock, $architecture))->validate();
+        $validationErrors = (new LayerFile($fileInfoMock, $architecture))->validate();
 
         $this->assertEmpty($validationErrors);
     }
 
     /** @test */
-    public function successIfStrictAndUsedLayerPhpCore(): void
+    public function successIfStrictAndUsedNamespaceIsPhpCore(): void
     {
         $fileContents = <<<'PHP'
             <?php
@@ -162,43 +147,46 @@ class LayerFileInfoTest extends TestCase
             use Test\LayerA\StatementA;
             $className = \SplFileInfo::class;
         PHP;
-        $architecture = ['Test\\LayerA' => ['Test\\LayerA']];
+        $architectureConfig = ['Test\\LayerA' => ['Test\\LayerA']];
+        $architecture = new Architecture(['architecture' => $architectureConfig]);
         $fileInfoMock = $this->createMock(SplFileInfo::class);
         $fileInfoMock->expects($this->once())->method('getContents')->willReturn($fileContents);
-        $validationErrors = (new LayerFileInfo($fileInfoMock, $architecture))->validate();
+        $validationErrors = (new LayerFile($fileInfoMock, $architecture))->validate();
 
         $this->assertEmpty($validationErrors);
     }
 
     /** @test */
-    public function successIfStrictAndUsedLayerNotInArchitectureButInChildLayers(): void
+    public function successIfStrictAndUsedNamespaceNotInArchitectureButInChildLayers(): void
     {
         $fileContents = <<<'PHP'
             <?php
             namespace Test\LayerA;
-            use Some\Other\Layer\Namespace;
+            use External\Other\Layer\Namespace;
         PHP;
-        $architecture = ['Test\\LayerA' => ['Test\\LayerA', 'Some']];
+        $architectureConfig = ['Test\\LayerA' => ['Test\\LayerA', 'External']];
+        $architecture = new Architecture(['architecture' => $architectureConfig]);
         $fileInfoMock = $this->createMock(SplFileInfo::class);
         $fileInfoMock->expects($this->once())->method('getContents')->willReturn($fileContents);
-        $validationErrors = (new LayerFileInfo($fileInfoMock, $architecture))->validate();
+        $validationErrors = (new LayerFile($fileInfoMock, $architecture))->validate();
 
         $this->assertEmpty($validationErrors);
     }
 
     /** @test */
-    public function successIfStrictAndUsedLayerHasAliasAndIsInChildLayers(): void
+    public function successIfStrictAndUsedNamespaceHasAliasAndIsInChildLayers(): void
     {
         $fileContents = <<<'PHP'
             <?php
             namespace Test\LayerA;
-            use SomeOther\Layer\Namespace as Soln;
-            $className = Soln\SubClass::class;
+            use External\Layer\Namespace as ELN;
+            $className = ELN\SubClass::class;
         PHP;
-        $architecture = ['Test\\LayerA' => ['Test\\LayerA', 'SomeOther', 'Soln']];
+        $architectureConfig = ['Test\\LayerA' => ['Test\\LayerA', 'External', 'ELN']];
+        $architecture = new Architecture(['architecture' => $architectureConfig]);
         $fileInfoMock = $this->createMock(SplFileInfo::class);
         $fileInfoMock->expects($this->once())->method('getContents')->willReturn($fileContents);
-        $validationErrors = (new LayerFileInfo($fileInfoMock, $architecture))->validate();
+        $validationErrors = (new LayerFile($fileInfoMock, $architecture))->validate();
 
         $this->assertEmpty($validationErrors);
     }
@@ -212,14 +200,15 @@ class LayerFileInfoTest extends TestCase
             use Test\LayerB\StatementB;
             $className = \Test\LayerC\StatementC::class;
         PHP;
-        $architecture = [
+        $architectureConfig = [
             'Test\\LayerA' => ['Test\\LayerB'],
             'Test\\LayerB' => [],
             'Test\\LayerC' => [],
         ];
+        $architecture = new Architecture(['architecture' => $architectureConfig]);
         $fileInfoMock = $this->createMock(SplFileInfo::class);
         $fileInfoMock->expects($this->once())->method('getContents')->willReturn($fileContents);
-        $validationErrors = (new LayerFileInfo($fileInfoMock, $architecture))->validate();
+        $validationErrors = (new LayerFile($fileInfoMock, $architecture))->validate();
 
         $this->assertEmpty($validationErrors);
     }
@@ -228,14 +217,15 @@ class LayerFileInfoTest extends TestCase
     public function successIfNoUseStatements(): void
     {
         $fileContents = '<?php namespace Test\LayerA;';
-        $architecture = [
+        $architectureConfig = [
             'Test\\LayerA' => ['Test\\LayerB'],
             'Test\\LayerB' => [],
             'Test\\LayerC' => [],
         ];
+        $architecture = new Architecture(['architecture' => $architectureConfig]);
         $fileInfoMock = $this->createMock(SplFileInfo::class);
         $fileInfoMock->expects($this->once())->method('getContents')->willReturn($fileContents);
-        $validationErrors = (new LayerFileInfo($fileInfoMock, $architecture))->validate();
+        $validationErrors = (new LayerFile($fileInfoMock, $architecture))->validate();
 
         $this->assertEmpty($validationErrors);
     }
