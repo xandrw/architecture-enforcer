@@ -2,11 +2,11 @@
 
 namespace Xandrw\ArchitectureEnforcer\Tests\Invokers;
 
-use LogicException;
 use PHPUnit\Framework\TestCase;
-use Xandrw\ArchitectureEnforcer\Invokers\ValidateArchitectureConflicts;
+use Symfony\Component\Console\Exception\LogicException;
+use Xandrw\ArchitectureEnforcer\Invokers\ValidateArchitectureConfigConflicts;
 
-class ValidateArchitectureConflictsTest extends TestCase
+class ValidateArchitectureConfigConflictsTest extends TestCase
 {
     /**
      * @test
@@ -16,7 +16,7 @@ class ValidateArchitectureConflictsTest extends TestCase
     {
         if ($fail) $this->expectException(LogicException::class);
 
-        (new ValidateArchitectureConflicts())($architectureConfig);
+        (new ValidateArchitectureConfigConflicts())($architectureConfig);
 
         $this->addToAssertionCount(1);
     }

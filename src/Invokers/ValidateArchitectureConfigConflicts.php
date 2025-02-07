@@ -2,9 +2,9 @@
 
 namespace Xandrw\ArchitectureEnforcer\Invokers;
 
-use LogicException;
+use Symfony\Component\Console\Exception\LogicException;
 
-class ValidateArchitectureConflicts
+class ValidateArchitectureConfigConflicts
 {
     /**
      * @throws LogicException

@@ -1,18 +1,14 @@
 <?php
 
-namespace Xandrw\ArchitectureEnforcer\Commands;
+namespace Xandrw\ArchitectureEnforcer\Commands\Validate;
 
 use Exception;
-use InvalidArgumentException;
-use LogicException;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Stopwatch\Stopwatch;
-use Symfony\Component\Yaml\Yaml;
-use Xandrw\ArchitectureEnforcer\Architecture;
 use Xandrw\ArchitectureEnforcer\LayerFilesScanner;
 
 /** @SuppressUnused */
@@ -39,32 +35,12 @@ class ValidateArchitectureCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $configPath = $input->getArgument('config');
-
-        if (is_file($configPath) === false) {
-            $output->writeln("<error>'$configPath' is not a file</error>");
-            return Command::FAILURE;
-        }
-
-        $config = $this->getConfig($configPath);
-
         try {
-            $architecture = new Architecture($config);
-        } catch (LogicException $e) {
+            $config = (new GetConfigArgument())($input);
+            $ignore = (new GetIgnoreOption())($input, $config->getIgnore());
+            $source = (new GetSourceArgument())($input, $ignore);
+        } catch (Exception $e) {
             $output->writeln("<error>{$e->getMessage()}</error>");
-            return Command::FAILURE;
-        }
-
-        $source = $input->getArgument('source');
-        $ignore = $this->getIgnoredPaths($input, $config);
-
-        if (is_dir($source) === false) {
-            $output->writeln("<error>'$source' is not a valid directory</error>");
-            return Command::FAILURE;
-        }
-
-        if (in_array($source, $ignore)) {
-            $output->writeln("<error>Source '$source' exists in the ignored list</error>");
             return Command::FAILURE;
         }
 
@@ -72,7 +48,7 @@ class ValidateArchitectureCommand extends Command
 
         $stopwatch = new Stopwatch();
         $stopwatch->start(self::class);
-        $scanner = new LayerFilesScanner($architecture);
+        $scanner = new LayerFilesScanner($config->getArchitecture());
         $scannedLayerFiles = $scanner->scan($source, $ignore);
 
         foreach ($scannedLayerFiles as $scannedLayerFile) {
@@ -104,40 +80,13 @@ class ValidateArchitectureCommand extends Command
         return Command::SUCCESS;
     }
 
-
     /**
      * @param Exception[] $errors
      */
     private function outputValidationErrors(OutputInterface $output, array $errors): void
     {
-        if (empty($errors)) return;
-
         foreach ($errors as $error) {
             $output->writeln("<error>{$error->getMessage()}</error>");
         }
-    }
-
-    private function getConfig(string $configPath): array
-    {
-        $extension = strtolower(pathinfo($configPath, PATHINFO_EXTENSION));
-
-        if (in_array($extension, ['yml', 'yaml'], true)) {
-            return (array) Yaml::parseFile($configPath);
-        }
-
-        if ($extension === 'php') return require $configPath;
-
-        throw new InvalidArgumentException("Unsupported config file extension: $extension");
-    }
-
-    private function getIgnoredPaths(InputInterface $input, array $config): array
-    {
-        $ignoreOptionValue = $input->getOption('ignore');
-
-        if (is_string($ignoreOptionValue)) {
-            $ignoreOptionValue = explode(',', $ignoreOptionValue);
-        }
-
-        return array_unique([...$ignoreOptionValue ?? [], ...$config['ignore'] ?? []]);
     }
 }
