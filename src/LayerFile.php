@@ -8,15 +8,15 @@ use Symfony\Component\Finder\SplFileInfo;
 use Xandrw\ArchitectureEnforcer\Exceptions\ArchitectureException;
 use Xandrw\ArchitectureEnforcer\Invokers\GetUseStatementsWithLines;
 
-readonly class LayerFile
+class LayerFile
 {
-    public string $fileContents;
-    public ?string $namespace;
-    public ?Layer $layer;
+    public readonly string $fileContents;
+    public readonly ?string $namespace;
+    public readonly ?Layer $layer;
 
     public function __construct(
-        public SplFileInfo $fileInfo,
-        public Architecture $architecture,
+        public readonly SplFileInfo $fileInfo,
+        public readonly Architecture $architecture,
     )
     {
         $this->fileContents = $this->fileInfo->getContents();

@@ -2,11 +2,11 @@
 
 namespace Xandrw\ArchitectureEnforcer;
 
-readonly class Layer
+class Layer
 {
     public function __construct(
-        public string $name,
-        public array $childLayerNames,
+        public readonly string $name,
+        public readonly array $childLayerNames,
     )
     {
     }

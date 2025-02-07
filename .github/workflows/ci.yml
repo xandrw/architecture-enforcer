@@ -20,5 +20,5 @@ jobs:
           bootstrap: vendor/autoload.php
           configuration: phpunit.xml
           test_suffix: Test.php
-          php_version: '8.2'
+          php_version: '8.1'
           version: '9.6'
