@@ -19,6 +19,12 @@ class GetSourceArgument
             throw new LogicException("Source '$source' exists in the ignored list");
         }
 
+        foreach ($ignore as $directory) {
+            if (str_ends_with($source, $directory) || str_ends_with($directory, $source)) {
+                throw new LogicException("Source '$source' exists in the ignored list");
+            }
+        }
+
         return $source;
     }
 }

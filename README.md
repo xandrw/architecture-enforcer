@@ -1,4 +1,5 @@
 # PHP Architecture Enforcer
+
 A simple command-line tool that recursively scans a directory, analyzes your PHP files
 for `namespace` and `use` statements, and checks them against a defined `architecture` config.
 If a file uses a `dependency` that is outside the allowed `scope` for its `layer`, the command will continue scanning,
@@ -7,12 +8,15 @@ collect any errors along with their file names and offending line numbers, then 
 ---
 
 ### Installation
+
 Install the tool as a development dependency using Composer:
+
 ```shell
 composer require --dev xandrw/architecture-enforcer
 ```
 
 Or you can install it globally
+
 ```shell
 composer global require xandrw/architecture-enforcer
 ```
@@ -20,10 +24,12 @@ composer global require xandrw/architecture-enforcer
 ---
 
 ### Configuration
+
 Create an architecture configuration file (e.g., architecture.php) in your project.
 This file defines your application’s layers and allowed dependencies.
 
 #### Example: Clean Architecture
+
 ```php
 // project-root/config/architecture.php
 <?php
@@ -53,6 +59,7 @@ return [
 ```
 
 **Or if you prefer yaml:**
+
 ```yaml
 # project-root/config/architecture.yml/yaml
 architecture:
@@ -65,7 +72,7 @@ architecture:
     - 'App\Domain'
   'App\Application':
     - 'App\Domain'
-  'App\Domain': []
+  'App\Domain': [ ]
 ignore:
   - bin
   - config
@@ -78,82 +85,47 @@ ignore:
 ---
 
 ### Usage
+
 After you've configured your architecture, let's say your project `root` is at
 `/Users/your-user/project-root` and has a `src` directory where your application files are located.
+
 ```shell
 ./vendor/bin/enforcer validate /Users/your-user/project-root/src /Users/your-user/project-root/config/architecture.php/yml/yaml
 ```
 
 **With ignored paths**
+
 ```shell
 ./vendor/bin/enforcer validate -i Domain/Interfaces,Infrastructure /Users/your-user/project-root/src /Users/your-user/project-root/config/architecture.php/yml/yaml
 ```
 
 #### Command Signature
+
 ```
 ./vendor/bin/enforcer validate [--ignore/-i] [--] <path-to-source> <path-to-config>
 ```
 
 **Or you can run:**
+
 ```shell
 ./vendor/bin/enforcer validate -h
 ```
 
 ---
 
-### Output Examples
-
-#### Successful Scan
-```
-Scanning directory: /Users/your-user/project-root/src
-Scanning [OK] App\Application\SomeApplicationClass
-Scanning [OK] App\Infrastructure\SomeInfrastructureClass
-Scanning [OK] App\Domain\Entities\SomeDomainEntity
-Scanning [OK] App\Presentation\Endpoints\SomePresentationEndpoint
-No issues found (time: 4ms, memory: 4MB)
-```
-
-#### Error Scan
-If a file violates the architectural rules, the output will indicate the failure and provide details.
-For example, consider this file:
-```php
-// /Users/your-user/project-root/src/Domain/Entities/SomeDomainEntity.php
-<?php
-
-namespace App\Domain\Entities;
-
-use App\Infrastructure\SomeInfrastructureClass;
-
-class SomeDomainEntity
-{
-    public function __construct()
-    {
-        $class = SomeInfrastructureClass::class;
-    }
-}
-```
-
-```
-Scanning directory: /Users/your-user/project-root/src
-Scanning [ERROR] App\Domain\Entities\SomeDomainEntity
-App\Domain\Entities\SomeDomainEntity:6 cannot use App\Infrastructure\SomeInfrastructureClass
-Issues found (time: 4ms, memory: 4MB)
-```
-
----
-
 ### Additional Information
+
 - **Tests:** for more details, refer to the `tests` included with the project.
 
 ---
 
-
-
 ### Roadmap
+
 - [x] `validate` command that validates your application files against the config
 - [x] Execution time and memory used
 - [x] Refactor processes to OOP
 - [ ] `--only/-o` optional parameter for `validate` which would do the opposite of `--ignore/-i`
 - [ ] `--no-circular` optional parameter for `validate` that restricts circular dependencies between layers
-- [ ] `--pure` Pure mode, where the defined architecture layers must exist, meaning the directory structure should be there
+- [ ] `--pure` Pure mode, where the defined architecture layers must exist, meaning the directory structure should be
+  there
 - [ ] `debug` command that shows all files, their namespace, the layer they belong to and the used layers/namespaces
