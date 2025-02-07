@@ -2,7 +2,7 @@
 
 namespace Xandrw\ArchitectureEnforcer\Invokers;
 
-class GetUseStatements
+class GetUseStatementsWithLines
 {
     public function __invoke(string $fileContents): array
     {

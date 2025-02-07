@@ -2,12 +2,12 @@
 
 namespace Xandrw\ArchitectureEnforcer\Invokers;
 
-use Xandrw\ArchitectureEnforcer\Exceptions\ConfigException;
+use LogicException;
 
-class ValidateArchitectureConfig
+class ValidateArchitectureConflicts
 {
     /**
-     * @throws ConfigException
+     * @throws LogicException
      */
     public function __invoke(array $architectureConfig): void
     {
@@ -23,14 +23,14 @@ class ValidateArchitectureConfig
 
     /**
      * Validates if current layer contains or is contained (as a string) in one of the verified layers
-     * and throws a ConfigException with the explanation message
-     * @throws ConfigException
+     * and throws a LogicException with the explanation message
+     * @throws LogicException
      */
-    private function validateLayerConflicts(string $layer, array $layers): void
+    private function validateLayerConflicts(string $layerName, array $verifiedLayers): void
     {
-        foreach ($layers as $validLayer) {
-            if (str_starts_with($layer, $validLayer) || str_starts_with($validLayer, $layer)) {
-                throw new ConfigException("Layer conflict between $validLayer and $layer");
+        foreach ($verifiedLayers as $verifiedLayerName) {
+            if (str_starts_with($layerName, $verifiedLayerName) || str_starts_with($verifiedLayerName, $layerName)) {
+                throw new LogicException("Layer conflict between $verifiedLayerName and $layerName");
             }
         }
     }
