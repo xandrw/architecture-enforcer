@@ -111,10 +111,7 @@ class ValidateArchitectureCommand extends Command
     private function outputValidationErrors(OutputInterface $output, array $errors): void
     {
         foreach ($errors as $error) {
-            $dashes = str_repeat('-', mb_strlen($error->getMessage()));
-            $output->writeln("<fg=red;options=bold>+$dashes+</>");
-            $output->writeln("<fg=red;options=bold>|{$error->getMessage()}|</>");
-            $output->writeln("<fg=red;options=bold>+$dashes+</>");
+            $output->writeln("<fg=red;options=bold>{$error->getMessage()}</>");
         }
     }
 
