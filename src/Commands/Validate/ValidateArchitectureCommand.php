@@ -118,6 +118,8 @@ class ValidateArchitectureCommand extends Command
             $ignoredText .= "[<fg=gray>$directory</>] ";
         }
 
+        if (empty($ignoredText)) return;
+
         $output->writeln("Ignored: $ignoredText");
     }
 }

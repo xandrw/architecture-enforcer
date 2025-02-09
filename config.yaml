@@ -4,3 +4,7 @@ architecture:
     - Xandrw\ArchitectureEnforcer\Domain
     - Symfony
   Xandrw\ArchitectureEnforcer\Domain: []
+
+ignore:
+  - tests
+  - vendor
