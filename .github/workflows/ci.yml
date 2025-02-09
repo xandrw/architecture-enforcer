@@ -4,19 +4,17 @@ on:
   push:
     tags:
       - 'v*'
+  pull_request:
+    types: [ opened, synchronize, reopened ]
 
 jobs:
   test:
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v4
-
       - uses: php-actions/composer@v6
-
       - name: Run Enforcer
         run: ./enforcer validate src config.yaml
-
       - name: PHPUnit Tests
         uses: php-actions/phpunit@v3
         with:
