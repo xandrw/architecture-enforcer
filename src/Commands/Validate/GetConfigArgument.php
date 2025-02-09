@@ -3,7 +3,7 @@
 namespace Xandrw\ArchitectureEnforcer\Commands\Validate;
 
 use Symfony\Component\Console\Input\InputInterface;
-use Xandrw\ArchitectureEnforcer\Config;
+use Xandrw\ArchitectureEnforcer\Domain\Config;
 
 class GetConfigArgument
 {

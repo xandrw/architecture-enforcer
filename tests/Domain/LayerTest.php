@@ -1,9 +1,9 @@
 <?php
 
-namespace Xandrw\ArchitectureEnforcer\Tests;
+namespace Xandrw\ArchitectureEnforcer\Tests\Domain;
 
 use PHPUnit\Framework\TestCase;
-use Xandrw\ArchitectureEnforcer\Layer;
+use Xandrw\ArchitectureEnforcer\Domain\Layer;
 
 class LayerTest extends TestCase
 {

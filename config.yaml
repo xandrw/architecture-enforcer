@@ -1,0 +1,6 @@
+architecture:
+  'Xandrw\ArchitectureEnforcer\Commands':
+    - Xandrw\ArchitectureEnforcer\Commands
+    - Xandrw\ArchitectureEnforcer\Domain
+    - Symfony
+  'Xandrw\ArchitectureEnforcer\Domain': []

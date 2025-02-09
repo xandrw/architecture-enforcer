@@ -9,7 +9,7 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Stopwatch\Stopwatch;
-use Xandrw\ArchitectureEnforcer\LayerFilesScanner;
+use Xandrw\ArchitectureEnforcer\Domain\LayerFilesScanner;
 
 /** @SuppressUnused */
 #[AsCommand(
@@ -56,7 +56,6 @@ class ValidateArchitectureCommand extends Command
         $failedCount = 0;
         $issueCount = 0;
         $totalCount = count($scannedLayerFiles);
-        $scanInfoText = '';
 
         foreach ($scannedLayerFiles as $scannedLayerFile) {
             $scanningText = "Scanning <slot> <comment>$scannedLayerFile</comment>";
@@ -65,7 +64,6 @@ class ValidateArchitectureCommand extends Command
             if (empty($validationErrors)) {
                 $scanningText = str_replace('<slot>', '<info>[OK]</info>', $scanningText);
                 $output->writeln($scanningText);
-                $scanInfoText .= '<fg=green;options=bold,reverse> </>';
                 $successfulCount++;
                 continue;
             }
@@ -75,7 +73,6 @@ class ValidateArchitectureCommand extends Command
             $this->failed = true;
             $scanningText = str_replace('<slot>', '<fg=red;options=bold>[ERROR]</>', $scanningText);
             $output->writeln($scanningText);
-            $scanInfoText .= '<fg=red;options=bold,reverse> </>';
             $this->outputValidationErrors($output, $validationErrors);
         }
 
@@ -90,14 +87,12 @@ class ValidateArchitectureCommand extends Command
             "[Time: <comment>{$event->getDuration()}ms</comment>] [Memory: <comment>{$memoryUsed}MB</comment>]";
 
         if ($this->failed) {
-            $output->writeln($scanInfoText);
             $output->writeln("$totalText $successfulText $failedText $issuesText");
             $output->writeln($timeMemoryText);
             $output->writeln("<fg=red;options=bold>Issues found</>");
             return Command::FAILURE;
         }
 
-        $output->writeln($scanInfoText);
         $output->writeln("$totalText $successfulText");
         $output->writeln($timeMemoryText);
         $output->writeln("<info>No issues found</info>");
