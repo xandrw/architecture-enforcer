@@ -124,6 +124,7 @@ After you've configured your architecture, let's say your project `root` is at
 - [x] `validate` command that validates your application files against the config
 - [x] Execution time and memory used
 - [x] Refactor processes to OOP
+- [ ] `--errors/-e` display only the errors, not all the scanned files
 - [ ] `--only/-o` optional parameter for `validate` which would do the opposite of `--ignore/-i`
 - [ ] `--no-circular` optional parameter for `validate` that restricts circular dependencies between layers
 - [ ] `--pure` Pure mode, where the defined architecture layers must exist, meaning the directory structure should be

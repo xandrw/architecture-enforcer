@@ -9,6 +9,10 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Stopwatch\Stopwatch;
+use Xandrw\ArchitectureEnforcer\Commands\Validate\Arguments\GetConfigArgument;
+use Xandrw\ArchitectureEnforcer\Commands\Validate\Arguments\GetIgnoreOption;
+use Xandrw\ArchitectureEnforcer\Commands\Validate\Arguments\GetSourceArgument;
+use Xandrw\ArchitectureEnforcer\Commands\Validate\Renderers\DefaultRenderer;
 use Xandrw\ArchitectureEnforcer\Domain\LayerFilesScanner;
 
 /** @SuppressUnused */
@@ -19,8 +23,6 @@ use Xandrw\ArchitectureEnforcer\Domain\LayerFilesScanner;
 )]
 class ValidateArchitectureCommand extends Command
 {
-    private bool $failed = false;
-
     protected function configure(): void
     {
         $this->addArgument(name: 'source', mode: InputArgument::REQUIRED, description: 'Path to app files');
@@ -44,82 +46,16 @@ class ValidateArchitectureCommand extends Command
             return Command::FAILURE;
         }
 
-        $output->writeln("Scanning directory: <comment>$source</comment>");
-        $this->outputIgnored($output, $ignore);
-
-        $stopwatch = new Stopwatch();
-        $stopwatch->start(self::class);
         $scanner = new LayerFilesScanner($config->getArchitecture());
         $scannedLayerFiles = $scanner->scan($source, $ignore);
 
-        $successfulCount = 0;
-        $failedCount = 0;
-        $issueCount = 0;
-        $totalCount = count($scannedLayerFiles);
-
-        foreach ($scannedLayerFiles as $scannedLayerFile) {
-            $scanningText = "Scanning <slot> <comment>$scannedLayerFile</comment>";
-            $validationErrors = $scannedLayerFile->validate();
-
-            if (empty($validationErrors)) {
-                $scanningText = str_replace('<slot>', '<info>[OK]</info>', $scanningText);
-                $output->writeln($scanningText);
-                $successfulCount++;
-                continue;
-            }
-
-            $failedCount++;
-            $issueCount += count($validationErrors);
-            $this->failed = true;
-            $scanningText = str_replace('<slot>', '<fg=red;options=bold>[ERROR]</>', $scanningText);
-            $output->writeln($scanningText);
-            $this->outputValidationErrors($output, $validationErrors);
-        }
-
-        $event = $stopwatch->stop(self::class);
-        $memoryUsed = $event->getMemory() / (1024 * 1024);
-        $totalText = "[Scanned: <comment>$totalCount</comment>]";
-        $successfulText = "[Successful: <info>$successfulCount</info>]";
-        $errorColor = $failedCount > 0 ? 'red' : 'black';
-        $failedText = "[Failed: <fg=$errorColor;options=bold>$failedCount</>]";
-        $issuesText = "[Issues: <fg=$errorColor;options=bold>$issueCount</>]";
-        $timeMemoryText =
-            "[Time: <comment>{$event->getDuration()}ms</comment>] [Memory: <comment>{$memoryUsed}MB</comment>]";
-
-        if ($this->failed) {
-            $output->writeln("$totalText $successfulText $failedText $issuesText");
-            $output->writeln($timeMemoryText);
-            $output->writeln("<fg=red;options=bold>Issues found</>");
+        try {
+            $hasErrors = (new DefaultRenderer($output, new Stopwatch(), $source, $ignore))($scannedLayerFiles);
+        } catch (Exception $e) {
+            $output->writeln("<fg=red;options=bold>{$e->getMessage()}</>");
             return Command::FAILURE;
         }
 
-        $output->writeln("$totalText $successfulText");
-        $output->writeln($timeMemoryText);
-        $output->writeln("<info>No issues found</info>");
-
-        return Command::SUCCESS;
-    }
-
-    /**
-     * @param Exception[] $errors
-     */
-    private function outputValidationErrors(OutputInterface $output, array $errors): void
-    {
-        foreach ($errors as $error) {
-            $output->writeln("<fg=red;options=bold>{$error->getMessage()}</>");
-        }
-    }
-
-    private function outputIgnored(OutputInterface $output, array $ignored): void
-    {
-        $ignoredText = '';
-
-        foreach ($ignored as $directory) {
-            $ignoredText .= "[<fg=gray>$directory</>] ";
-        }
-
-        if (empty($ignoredText)) return;
-
-        $output->writeln("Ignored: $ignoredText");
+        return $hasErrors ? Command::FAILURE : Command::SUCCESS;
     }
 }

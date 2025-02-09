@@ -1,6 +1,6 @@
 <?php
 
-namespace Xandrw\ArchitectureEnforcer\Commands\Validate;
+namespace Xandrw\ArchitectureEnforcer\Commands\Validate\Arguments;
 
 use Symfony\Component\Console\Input\InputInterface;
 
