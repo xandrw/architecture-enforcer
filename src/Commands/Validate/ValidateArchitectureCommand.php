@@ -46,11 +46,13 @@ class ValidateArchitectureCommand extends Command
             return Command::FAILURE;
         }
 
+        $stopwatch = new Stopwatch();
+        $stopwatch->start(self::class);
         $scanner = new LayerFilesScanner($config->getArchitecture());
         $scannedLayerFiles = $scanner->scan($source, $ignore);
 
         try {
-            $hasErrors = (new DefaultRenderer($output, new Stopwatch(), $source, $ignore))($scannedLayerFiles);
+            $hasErrors = (new DefaultRenderer($output, $stopwatch, $source, $ignore))($scannedLayerFiles);
         } catch (Exception $e) {
             $output->writeln("<fg=red;options=bold>{$e->getMessage()}</>");
             return Command::FAILURE;

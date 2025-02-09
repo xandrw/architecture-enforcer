@@ -22,7 +22,6 @@ class DefaultRenderer
     /** @param LayerFile[] $layerFiles */
     public function __invoke(array $layerFiles): bool
     {
-        $this->stopwatch->start(ValidateArchitectureCommand::class);
         $this->output->writeln("Scanning directory: <comment>$this->source</comment>");
         $this->outputIgnored($this->ignore);
 
