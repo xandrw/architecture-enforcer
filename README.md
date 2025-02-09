@@ -111,6 +111,12 @@ After you've configured your architecture, let's say your project `root` is at
 ./vendor/bin/enforcer validate -h
 ```
 
+#### Self validation
+
+```shell
+./vendor/bin/enforcer self-validate
+```
+
 ---
 
 ### Additional Information
@@ -124,6 +130,7 @@ After you've configured your architecture, let's say your project `root` is at
 - [x] `validate` command that validates your application files against the config
 - [x] Execution time and memory used
 - [x] Refactor processes to OOP
+- [x] Add self-validate method for out-of-the-box run. 
 - [ ] `--only/-o` optional parameter for `validate` which would do the opposite of `--ignore/-i`
 - [ ] `--no-circular` optional parameter for `validate` that restricts circular dependencies between layers
 - [ ] `--pure` Pure mode, where the defined architecture layers must exist, meaning the directory structure should be

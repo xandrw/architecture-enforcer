@@ -89,15 +89,14 @@ class ValidateArchitectureCommand extends Command
         $timeMemoryText =
             "[Time: <comment>{$event->getDuration()}ms</comment>] [Memory: <comment>{$memoryUsed}MB</comment>]";
 
+        $output->writeln($scanInfoText);
         if ($this->failed) {
-            $output->writeln($scanInfoText);
             $output->writeln("$totalText $successfulText $failedText $issuesText");
             $output->writeln($timeMemoryText);
             $output->writeln("<fg=red;options=bold>Issues found</>");
             return Command::FAILURE;
         }
 
-        $output->writeln($scanInfoText);
         $output->writeln("$totalText $successfulText");
         $output->writeln($timeMemoryText);
         $output->writeln("<info>No issues found</info>");
