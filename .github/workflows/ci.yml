@@ -14,6 +14,9 @@ jobs:
 
       - uses: php-actions/composer@v6
 
+      - name: Run Enforcer
+        run: ./enforcer validate src config.yaml
+
       - name: PHPUnit Tests
         uses: php-actions/phpunit@v3
         with:

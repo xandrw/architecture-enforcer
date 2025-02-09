@@ -1,6 +1,6 @@
 <?php
 
-namespace Xandrw\ArchitectureEnforcer\Exceptions;
+namespace Xandrw\ArchitectureEnforcer\Domain\Exceptions;
 
 use Exception;
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace Xandrw\ArchitectureEnforcer;
+namespace Xandrw\ArchitectureEnforcer\Domain;
 
 class Architecture
 {

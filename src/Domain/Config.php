@@ -1,11 +1,11 @@
 <?php
 
-namespace Xandrw\ArchitectureEnforcer;
+namespace Xandrw\ArchitectureEnforcer\Domain;
 
 use Symfony\Component\Console\Exception\InvalidArgumentException;
 use Symfony\Component\Console\Exception\LogicException;
 use Symfony\Component\Yaml\Yaml;
-use Xandrw\ArchitectureEnforcer\Invokers\ValidateArchitectureConfigConflicts;
+use Xandrw\ArchitectureEnforcer\Domain\Invokers\ValidateArchitectureConfigConflicts;
 
 class Config
 {

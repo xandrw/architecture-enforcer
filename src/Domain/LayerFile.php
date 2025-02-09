@@ -1,12 +1,12 @@
 <?php
 
-namespace Xandrw\ArchitectureEnforcer;
+namespace Xandrw\ArchitectureEnforcer\Domain;
 
 use ReflectionClass;
 use ReflectionFunction;
 use Symfony\Component\Finder\SplFileInfo;
-use Xandrw\ArchitectureEnforcer\Exceptions\ArchitectureException;
-use Xandrw\ArchitectureEnforcer\Invokers\GetUseStatementsWithLines;
+use Xandrw\ArchitectureEnforcer\Domain\Exceptions\ArchitectureException;
+use Xandrw\ArchitectureEnforcer\Domain\Invokers\GetUseStatementsWithLines;
 
 class LayerFile
 {

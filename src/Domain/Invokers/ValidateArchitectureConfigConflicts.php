@@ -1,6 +1,6 @@
 <?php
 
-namespace Xandrw\ArchitectureEnforcer\Invokers;
+namespace Xandrw\ArchitectureEnforcer\Domain\Invokers;
 
 use Symfony\Component\Console\Exception\LogicException;
 

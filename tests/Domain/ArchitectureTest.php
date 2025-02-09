@@ -1,9 +1,9 @@
 <?php
 
-namespace Xandrw\ArchitectureEnforcer\Tests;
+namespace Xandrw\ArchitectureEnforcer\Tests\Domain;
 
 use PHPUnit\Framework\TestCase;
-use Xandrw\ArchitectureEnforcer\Architecture;
+use Xandrw\ArchitectureEnforcer\Domain\Architecture;
 
 class ArchitectureTest extends TestCase
 {

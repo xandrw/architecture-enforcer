@@ -1,10 +1,10 @@
 <?php
 
-namespace Xandrw\ArchitectureEnforcer\Tests\Invokers;
+namespace Xandrw\ArchitectureEnforcer\Tests\Domain\Invokers;
 
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Exception\LogicException;
-use Xandrw\ArchitectureEnforcer\Invokers\ValidateArchitectureConfigConflicts;
+use Xandrw\ArchitectureEnforcer\Domain\Invokers\ValidateArchitectureConfigConflicts;
 
 class ValidateArchitectureConfigConflictsTest extends TestCase
 {

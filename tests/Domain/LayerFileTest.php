@@ -1,12 +1,12 @@
 <?php
 
-namespace Xandrw\ArchitectureEnforcer\Tests;
+namespace Xandrw\ArchitectureEnforcer\Tests\Domain;
 
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Finder\SplFileInfo;
-use Xandrw\ArchitectureEnforcer\Architecture;
-use Xandrw\ArchitectureEnforcer\Exceptions\ArchitectureException;
-use Xandrw\ArchitectureEnforcer\LayerFile;
+use Xandrw\ArchitectureEnforcer\Domain\Architecture;
+use Xandrw\ArchitectureEnforcer\Domain\Exceptions\ArchitectureException;
+use Xandrw\ArchitectureEnforcer\Domain\LayerFile;
 
 class LayerFileTest extends TestCase
 {
