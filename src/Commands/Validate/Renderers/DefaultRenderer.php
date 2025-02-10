@@ -5,7 +5,7 @@ namespace Xandrw\ArchitectureEnforcer\Commands\Validate\Renderers;
 use Exception;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Stopwatch\Stopwatch;
-use Xandrw\ArchitectureEnforcer\Commands\Validate\ValidateArchitectureCommand;
+use Xandrw\ArchitectureEnforcer\Commands\Validate\ValidateCommand;
 use Xandrw\ArchitectureEnforcer\Domain\LayerFile;
 
 class DefaultRenderer
@@ -53,7 +53,7 @@ class DefaultRenderer
         $totalText = "[Scanned: <comment>$totalCount</comment>]";
         $successfulText = "[Successful: <info>$successfulCount</info>]";
 
-        $event = $this->stopwatch->stop(ValidateArchitectureCommand::class);
+        $event = $this->stopwatch->stop(ValidateCommand::class);
         $memoryUsed = $event->getMemory() / (1024 * 1024);
         $timeMemoryText =
             "[Time: <comment>{$event->getDuration()}ms</comment>] [Memory: <comment>{$memoryUsed}MB</comment>]";

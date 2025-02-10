@@ -21,7 +21,7 @@ use Xandrw\ArchitectureEnforcer\Domain\LayerFilesScanner;
     description: 'Validate Architecture layers based on config',
     aliases: ['v']
 )]
-class ValidateArchitectureCommand extends Command
+class ValidateCommand extends Command
 {
     protected function configure(): void
     {

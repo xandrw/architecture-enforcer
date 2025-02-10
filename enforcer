@@ -20,8 +20,8 @@ unset($autoloadPossiblePath);
 require ENFORCER_COMPOSER_INSTALL;
 
 use Symfony\Component\Console\Application;
-use Xandrw\ArchitectureEnforcer\Commands\Validate\ValidateArchitectureCommand;
+use Xandrw\ArchitectureEnforcer\Commands\Validate\ValidateCommand;
 
 $application = new Application('xandrw/architecture-enforcer');
-$application->add(new ValidateArchitectureCommand());
+$application->add(new ValidateCommand());
 $application->run();
