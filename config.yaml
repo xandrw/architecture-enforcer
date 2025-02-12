@@ -1,9 +1,11 @@
 architecture:
   Xandrw\ArchitectureEnforcer\Commands:
-    - Xandrw\ArchitectureEnforcer\Commands
+    - Xandrw\ArchitectureEnforcer\Commands # self-reference marks the layer as strict
     - Xandrw\ArchitectureEnforcer\Domain
-    - Symfony
-  Xandrw\ArchitectureEnforcer\Domain: []
+    - Symfony # specified because of strict mode
+  Xandrw\ArchitectureEnforcer\Domain:
+    - Xandrw\ArchitectureEnforcer\Domain # strict
+    - Symfony # the Symfony namespace may be used
 
 ignore:
   - tests

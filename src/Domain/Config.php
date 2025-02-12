@@ -2,31 +2,15 @@
 
 namespace Xandrw\ArchitectureEnforcer\Domain;
 
-use Symfony\Component\Console\Exception\InvalidArgumentException;
 use Symfony\Component\Console\Exception\LogicException;
-use Symfony\Component\Yaml\Yaml;
 use Xandrw\ArchitectureEnforcer\Domain\Invokers\ValidateArchitectureConfigConflicts;
 
 class Config
 {
-    private array $config = [];
-    private array $ignore = [];
     private Architecture $architecture;
 
-    public function __construct(string $configPath)
+    public function __construct(private readonly array $config, private array $ignore = [])
     {
-        if (!is_file($configPath)) {
-            throw new LogicException("'$configPath' is not a file");
-        }
-
-        $extension = strtolower(pathinfo($configPath, PATHINFO_EXTENSION));
-
-        $this->config = match ($extension) {
-            'php' => require $configPath,
-            'yml', 'yaml' => (array) Yaml::parseFile($configPath),
-            default => throw new InvalidArgumentException("Unsupported config file extension: $extension"),
-        };
-
         if (!array_key_exists('architecture', $this->config)) {
             throw new LogicException("'architecture' key not set in config file");
         }

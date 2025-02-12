@@ -2,7 +2,7 @@
 
 namespace Xandrw\ArchitectureEnforcer\Commands\Validate\Arguments;
 
-use Symfony\Component\Console\Exception\LogicException;
+use Symfony\Component\Console\Exception\InvalidArgumentException;
 use Symfony\Component\Console\Input\InputInterface;
 
 class GetSourceArgument
@@ -12,16 +12,16 @@ class GetSourceArgument
         $source = $input->getArgument('source');
 
         if (!is_dir($source)) {
-            throw new LogicException("'$source' is not a valid directory");
+            throw new InvalidArgumentException("'$source' is not a valid directory");
         }
 
         if (in_array($source, $ignore)) {
-            throw new LogicException("Source '$source' exists in the ignored list");
+            throw new InvalidArgumentException("Source '$source' exists in the ignored list");
         }
 
         foreach ($ignore as $directory) {
             if (str_ends_with($source, $directory) || str_ends_with($directory, $source)) {
-                throw new LogicException("Source '$source' exists in the ignored list");
+                throw new InvalidArgumentException("Source '$source' exists in the ignored list");
             }
         }
 

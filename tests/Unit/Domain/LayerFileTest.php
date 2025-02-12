@@ -1,6 +1,6 @@
 <?php
 
-namespace Xandrw\ArchitectureEnforcer\Tests\Domain;
+namespace Xandrw\ArchitectureEnforcer\Tests\Unit\Domain;
 
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Finder\SplFileInfo;

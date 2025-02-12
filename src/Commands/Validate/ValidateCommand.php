@@ -9,11 +9,11 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Stopwatch\Stopwatch;
+use Xandrw\ArchitectureEnforcer\Commands\LayerFileScanner;
 use Xandrw\ArchitectureEnforcer\Commands\Validate\Arguments\GetConfigArgument;
 use Xandrw\ArchitectureEnforcer\Commands\Validate\Arguments\GetIgnoreOption;
 use Xandrw\ArchitectureEnforcer\Commands\Validate\Arguments\GetSourceArgument;
 use Xandrw\ArchitectureEnforcer\Commands\Validate\Renderers\DefaultRenderer;
-use Xandrw\ArchitectureEnforcer\Domain\LayerFilesScanner;
 
 /** @SuppressUnused */
 #[AsCommand(
@@ -42,19 +42,21 @@ class ValidateCommand extends Command
             $ignore = (new GetIgnoreOption())($input, $config->getIgnore());
             $source = (new GetSourceArgument())($input, $ignore);
         } catch (Exception $e) {
-            $output->writeln("<fg=red;options=bold>{$e->getMessage()}</>");
+            $exceptionClass = $e::class;
+            $output->writeln("<fg=red;options=bold>$exceptionClass: {$e->getMessage()}</>");
             return Command::FAILURE;
         }
 
         $stopwatch = new Stopwatch();
         $stopwatch->start(self::class);
-        $scanner = new LayerFilesScanner($config->getArchitecture());
+        $scanner = new LayerFileScanner($config->getArchitecture());
         $scannedLayerFiles = $scanner->scan($source, $ignore);
 
         try {
             $hasErrors = (new DefaultRenderer($output, $stopwatch, $source, $ignore))($scannedLayerFiles);
         } catch (Exception $e) {
-            $output->writeln("<fg=red;options=bold>{$e->getMessage()}</>");
+            $exceptionClass = $e::class;
+            $output->writeln("<fg=red;options=bold>$exceptionClass: {$e->getMessage()}</>");
             return Command::FAILURE;
         }
 

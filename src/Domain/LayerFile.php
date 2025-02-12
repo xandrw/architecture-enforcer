@@ -49,6 +49,11 @@ class LayerFile
         return $this->namespace . '\\' . $this->fileInfo->getFilenameWithoutExtension();
     }
 
+    protected function getUsedNamespacesWithLines(): array
+    {
+        return (new GetUseStatementsWithLines())($this->fileContents);
+    }
+
     private function canUseNamespace(string $namespace): bool
     {
         if ($this->layer === null) return false;
@@ -78,11 +83,6 @@ class LayerFile
         if ($layer !== null) return $layer;
 
         return $namespace;
-    }
-
-    private function getUsedNamespacesWithLines(): array
-    {
-        return (new GetUseStatementsWithLines())($this->fileContents);
     }
 
     private function initializeNamespace(): void

@@ -1,9 +1,9 @@
 # PHP Architecture Enforcer
 
-A simple command-line tool that recursively scans a directory, analyzes your PHP files
+A command-line tool that recursively scans a given app source directory, analyzes the `.php` files
 for `namespace` and `use` statements, and checks them against a defined `architecture` config.
-If a file uses a `dependency` that is outside the allowed `scope` for its `layer`, the command will continue scanning,
-collect any errors along with their file names and offending line numbers, then display all the errors.
+If a file uses a `dependency` that is outside the allowed `scope` for its `layer`, the command
+will display all errors along with their file names and offending line numbers.
 
 ---
 
@@ -25,8 +25,7 @@ composer global require xandrw/architecture-enforcer
 
 ### Configuration
 
-Create an architecture configuration file (e.g., architecture.php) in your project.
-This file defines your application’s layers and allowed dependencies.
+The configuration file defines your application's layers and their allowed dependencies.
 
 #### Example: Clean Architecture
 
@@ -58,7 +57,7 @@ return [
 ];
 ```
 
-**Or if you prefer yaml:**
+**Or if you prefer `yaml`:**
 
 ```yaml
 # project-root/config/architecture.yml/yaml
@@ -82,21 +81,51 @@ ignore:
   - vendor
 ```
 
+**Or `json`:**
+
+```json
+{
+    "architecture": {
+        "App\\Presentation": [
+            "App\\Infrastructure",
+            "App\\Application",
+            "App\\Domain"
+        ],
+        "App\\Infrastructure": [
+            "App\\Application",
+            "App\\Domain"
+        ],
+        "App\\Application": [
+            "App\\Domain"
+        ],
+        "App\\Domain": []
+    },
+    "ignore": [
+        "bin",
+        "config",
+        "public",
+        "tests",
+        "var",
+        "vendor"
+    ]
+}
+```
+
 ---
 
 ### Usage
 
 After you've configured your architecture, let's say your project `root` is at
-`/Users/your-user/project-root` and has a `src` directory where your application files are located.
+`/project-root` and has a `src` directory where your application files are located.
 
 ```shell
-./vendor/bin/enforcer validate /Users/your-user/project-root/src /Users/your-user/project-root/config/architecture.php/yml/yaml
+./vendor/bin/enforcer validate /project-root/src /project-root/config/architecture.php/yml/yaml
 ```
 
 **With ignored paths**
 
 ```shell
-./vendor/bin/enforcer validate -i Domain/Interfaces,Infrastructure /Users/your-user/project-root/src /Users/your-user/project-root/config/architecture.php/yml/yaml
+./vendor/bin/enforcer validate -i Domain/Interfaces,Infrastructure /project-root/src /project-root/config/architecture.php/yml/yaml/json
 ```
 
 #### Command Signature
@@ -124,8 +153,6 @@ After you've configured your architecture, let's say your project `root` is at
 - [x] `validate` command that validates your application files against the config
 - [x] Execution time and memory used
 - [x] Refactor processes to OOP
-- [ ] `--errors/-e` display only the errors, not all the scanned files
-- [ ] `--only/-o` optional parameter for `validate` which would do the opposite of `--ignore/-i`
 - [ ] `--no-circular` optional parameter for `validate` that restricts circular dependencies between layers
 - [ ] `--pure` Pure mode, where the defined architecture layers must exist, meaning the directory structure should be
   there

@@ -33,9 +33,9 @@ class DefaultRenderer
 
         foreach ($layerFiles as $layerFile) {
             $scanningText = "Scanning <slot> <comment>$layerFile</comment>";
-            $validationErrors = $layerFile->validate();
+            $validationIssues = $layerFile->validate();
 
-            if (empty($validationErrors)) {
+            if (empty($validationIssues)) {
                 $scanningText = str_replace('<slot>', '<info>[OK]</info>', $scanningText);
                 $this->output->writeln($scanningText);
                 $successfulCount++;
@@ -43,11 +43,11 @@ class DefaultRenderer
             }
 
             $failedCount++;
-            $issueCount += count($validationErrors);
+            $issueCount += count($validationIssues);
             $hasValidationFailure = true;
             $scanningText = str_replace('<slot>', '<fg=red;options=bold>[ERROR]</>', $scanningText);
             $this->output->writeln($scanningText);
-            $this->outputValidationErrors($validationErrors);
+            $this->outputValidationErrors($validationIssues);
         }
 
         $totalText = "[Scanned: <comment>$totalCount</comment>]";

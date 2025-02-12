@@ -1,6 +1,6 @@
 <?php
 
-namespace Xandrw\ArchitectureEnforcer\Tests\Domain\Invokers;
+namespace Xandrw\ArchitectureEnforcer\Tests\Unit\Domain\Invokers;
 
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Exception\LogicException;
