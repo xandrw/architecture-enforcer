@@ -14,6 +14,11 @@ class Architecture
         }
     }
 
+    public function getLayers(): array
+    {
+        return $this->layers;
+    }
+
     public function getLayerByNamespace(?string $namespace): ?Layer
     {
         if ($namespace === null) return null;
