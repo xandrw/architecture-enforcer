@@ -131,7 +131,7 @@ After you've configured your architecture, let's say your project `root` is at
 #### Command Signature
 
 ```
-./vendor/bin/enforcer validate [--ignore/-i] [--] <path-to-source> <path-to-config>
+./vendor/bin/enforcer validate [--ignore/-i] [--no-circular/-c] [--] <path-to-source> <path-to-config>
 ```
 
 **Or you can run:**
@@ -153,7 +153,7 @@ After you've configured your architecture, let's say your project `root` is at
 - [x] `validate` command that validates your application files against the config
 - [x] Execution time and memory used
 - [x] Refactor processes to OOP
-- [ ] `--no-circular` optional parameter for `validate` that restricts circular dependencies between layers
+- [x] `--no-circular` optional parameter for `validate` that restricts circular dependencies between layers
 - [ ] `--pure` Pure mode, where the defined architecture layers must exist, meaning the directory structure should be
   there
 - [ ] `debug` command that shows all files, their namespace, the layer they belong to and the used layers/namespaces
