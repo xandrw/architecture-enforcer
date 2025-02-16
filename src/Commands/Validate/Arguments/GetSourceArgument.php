@@ -2,7 +2,9 @@
 
 namespace Xandrw\ArchitectureEnforcer\Commands\Validate\Arguments;
 
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Exception\InvalidArgumentException;
+use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 
 class GetSourceArgument
@@ -26,5 +28,10 @@ class GetSourceArgument
         }
 
         return $source;
+    }
+
+    public static function addTo(Command $command): void
+    {
+        $command->addArgument(name: 'source', mode: InputArgument::REQUIRED, description: 'Path to app files');
     }
 }

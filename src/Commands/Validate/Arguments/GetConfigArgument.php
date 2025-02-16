@@ -3,8 +3,10 @@
 namespace Xandrw\ArchitectureEnforcer\Commands\Validate\Arguments;
 
 use JsonException;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Exception\InvalidArgumentException;
 use Symfony\Component\Console\Exception\LogicException;
+use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Yaml\Yaml;
 use Xandrw\ArchitectureEnforcer\Domain\Config;
@@ -37,5 +39,10 @@ class GetConfigArgument
         }
 
         return new Config($config);
+    }
+
+    public static function addTo(Command $command): void
+    {
+        $command->addArgument(name: 'config', mode: InputArgument::REQUIRED, description: 'Path to config file');
     }
 }
