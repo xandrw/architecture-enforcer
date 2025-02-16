@@ -131,7 +131,7 @@ After you've configured your architecture, let's say your project `root` is at
 #### Command Signature
 
 ```
-./vendor/bin/enforcer validate [--ignore/-i] [--no-circular/-c] [--] <path-to-source> <path-to-config>
+./vendor/bin/enforcer validate [--ignore/-i] [--no-circular/-c] [--pure/p] [--] <path-to-source> <path-to-config>
 ```
 
 **Or you can run:**

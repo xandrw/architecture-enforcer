@@ -11,6 +11,11 @@ class Layer
     {
     }
 
+    public static function removeNameNamespace(string $name): string
+    {
+        return preg_replace('/^Xandrw\\\\ArchitectureEnforcer\\\\/', '', $name);
+    }
+
     public function isStrict(): bool
     {
         return in_array($this->name, $this->childLayerNames, true);

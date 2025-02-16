@@ -75,6 +75,12 @@ class DefaultRenderer
         return false;
     }
 
+    public static function outputException(OutputInterface $output, Exception $e): void
+    {
+        $exceptionClass = $e::class;
+        $output->writeln("<fg=red;options=bold>$exceptionClass: {$e->getMessage()}</>");
+    }
+
     private function outputIgnored(array $ignored): void
     {
         $ignoredText = '';
