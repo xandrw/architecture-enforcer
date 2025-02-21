@@ -154,6 +154,8 @@ After you've configured your architecture, let's say your project `root` is at
 - [x] Execution time and memory used
 - [x] Refactor processes to OOP
 - [x] `--no-circular` optional parameter for `validate` that restricts circular dependencies between layers
-- [ ] `--pure` Pure mode, where the defined architecture layers must exist, meaning the directory structure should be
+- [x] `--pure` Pure mode, where the defined architecture layers must exist, meaning the directory structure should be
   there
+- [ ] Separate rendering and validating
 - [ ] `debug` command that shows all files, their namespace, the layer they belong to and the used layers/namespaces
+- [ ] `diagram` command that generates uml diagram of layers and dependencies
