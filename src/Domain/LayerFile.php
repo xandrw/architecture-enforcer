@@ -13,6 +13,8 @@ class LayerFile
     public readonly string $fileContents;
     public readonly ?string $namespace;
     public readonly ?Layer $layer;
+    /** @var ArchitectureException[] */
+    private array $errors = [];
 
     public function __construct(
         public readonly SplFileInfo $fileInfo,
@@ -22,6 +24,12 @@ class LayerFile
         $this->fileContents = $this->fileInfo->getContents();
         $this->initializeNamespace();
         $this->initializeLayer();
+        $this->validate();
+    }
+
+    public function getErrors(): array
+    {
+        return $this->errors;
     }
 
     public function getFileName(): string
@@ -29,24 +37,34 @@ class LayerFile
         return $this->fileInfo->getFilename();
     }
 
-    /** @return ArchitectureException[] */
-    public function validate(): array
-    {
-        if ($this->layer === null) return [];
-
-        $errors = [];
-
-        foreach ($this->getUsedNamespacesWithLines() as [$namespace, $line]) {
-            if ($this->canUseNamespace($namespace)) continue;
-            $errors[] = new ArchitectureException($this, $line, $namespace);
-        }
-
-        return $errors;
-    }
-
     public function __toString(): string
     {
         return $this->namespace . '\\' . $this->fileInfo->getFilenameWithoutExtension();
+    }
+
+    private function initializeNamespace(): void
+    {
+        if (preg_match('/namespace\s+(?<namespace>[^;]+);/', $this->fileContents, $matches)) {
+            $this->namespace = trim($matches['namespace']);
+            return;
+        }
+
+        $this->namespace = null;
+    }
+
+    private function initializeLayer(): void
+    {
+        $this->layer = $this->architecture->getLayerByNamespace($this->namespace);
+    }
+
+    private function validate(): void
+    {
+        if ($this->layer === null) return;
+
+        foreach ($this->getUsedNamespacesWithLines() as [$namespace, $line]) {
+            if ($this->canUseNamespace($namespace)) continue;
+            $this->errors[] = new ArchitectureException($this, $line, $namespace);
+        }
     }
 
     protected function getUsedNamespacesWithLines(): array
@@ -83,21 +101,6 @@ class LayerFile
         if ($layer !== null) return $layer;
 
         return $namespace;
-    }
-
-    private function initializeNamespace(): void
-    {
-        if (preg_match('/namespace\s+(?<namespace>[^;]+);/', $this->fileContents, $matches)) {
-            $this->namespace = trim($matches['namespace']);
-            return;
-        }
-
-        $this->namespace = null;
-    }
-
-    private function initializeLayer(): void
-    {
-        $this->layer = $this->architecture->getLayerByNamespace($this->namespace);
     }
 
     private function isInternal(string $useStatement): bool

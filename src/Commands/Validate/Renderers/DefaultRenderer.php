@@ -33,7 +33,7 @@ class DefaultRenderer
 
         foreach ($layerFiles as $layerFile) {
             $scanningText = "Scanning <slot> <comment>$layerFile</comment>";
-            $validationIssues = $layerFile->validate();
+            $validationIssues = $layerFile->getErrors();
 
             if (empty($validationIssues)) {
                 $scanningText = str_replace('<slot>', '<info>[OK]</info>', $scanningText);

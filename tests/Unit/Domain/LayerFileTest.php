@@ -43,7 +43,7 @@ class LayerFileTest extends TestCase
         $layerFileInfo = new LayerFile($fileInfoMock, new Architecture(['Test' => []]));
 
         $this->assertSame('Test\\Namespace', $layerFileInfo->namespace);
-        $this->assertSame('Test', (string) $layerFileInfo->layer);
+        $this->assertSame('Test', (string)$layerFileInfo->layer);
     }
 
     /** @test */
@@ -76,7 +76,7 @@ class LayerFileTest extends TestCase
         $fileInfoMock = $this->createMock(SplFileInfo::class);
         $fileInfoMock->expects($this->once())->method('getContents')->willReturn($fileContents);
 
-        $validationErrors = (new LayerFile($fileInfoMock, $architecture))->validate();
+        $validationErrors = (new LayerFile($fileInfoMock, $architecture))->getErrors();
 
         $this->assertCount(1, $validationErrors);
         $this->assertTrue($validationErrors[0] instanceof ArchitectureException);
@@ -98,7 +98,7 @@ class LayerFileTest extends TestCase
         $architecture = new Architecture($architectureConfig);
         $fileInfoMock = $this->createMock(SplFileInfo::class);
         $fileInfoMock->expects($this->once())->method('getContents')->willReturn($fileContents);
-        $validationErrors = (new LayerFile($fileInfoMock, $architecture))->validate();
+        $validationErrors = (new LayerFile($fileInfoMock, $architecture))->getErrors();
 
         $this->assertCount(1, $validationErrors);
         $this->assertTrue($validationErrors[0] instanceof ArchitectureException);
@@ -116,7 +116,7 @@ class LayerFileTest extends TestCase
         $architecture = new Architecture($architectureConfig);
         $fileInfoMock = $this->createMock(SplFileInfo::class);
         $fileInfoMock->expects($this->once())->method('getContents')->willReturn($fileContents);
-        $validationErrors = (new LayerFile($fileInfoMock, $architecture))->validate();
+        $validationErrors = (new LayerFile($fileInfoMock, $architecture))->getErrors();
 
         $this->assertEmpty($validationErrors);
     }
@@ -133,7 +133,7 @@ class LayerFileTest extends TestCase
         $architecture = new Architecture($architectureConfig);
         $fileInfoMock = $this->createMock(SplFileInfo::class);
         $fileInfoMock->expects($this->once())->method('getContents')->willReturn($fileContents);
-        $validationErrors = (new LayerFile($fileInfoMock, $architecture))->validate();
+        $validationErrors = (new LayerFile($fileInfoMock, $architecture))->getErrors();
 
         $this->assertEmpty($validationErrors);
     }
@@ -151,7 +151,7 @@ class LayerFileTest extends TestCase
         $architecture = new Architecture($architectureConfig);
         $fileInfoMock = $this->createMock(SplFileInfo::class);
         $fileInfoMock->expects($this->once())->method('getContents')->willReturn($fileContents);
-        $validationErrors = (new LayerFile($fileInfoMock, $architecture))->validate();
+        $validationErrors = (new LayerFile($fileInfoMock, $architecture))->getErrors();
 
         $this->assertEmpty($validationErrors);
     }
@@ -168,7 +168,7 @@ class LayerFileTest extends TestCase
         $architecture = new Architecture($architectureConfig);
         $fileInfoMock = $this->createMock(SplFileInfo::class);
         $fileInfoMock->expects($this->once())->method('getContents')->willReturn($fileContents);
-        $validationErrors = (new LayerFile($fileInfoMock, $architecture))->validate();
+        $validationErrors = (new LayerFile($fileInfoMock, $architecture))->getErrors();
 
         $this->assertEmpty($validationErrors);
     }
@@ -186,7 +186,7 @@ class LayerFileTest extends TestCase
         $architecture = new Architecture($architectureConfig);
         $fileInfoMock = $this->createMock(SplFileInfo::class);
         $fileInfoMock->expects($this->once())->method('getContents')->willReturn($fileContents);
-        $validationErrors = (new LayerFile($fileInfoMock, $architecture))->validate();
+        $validationErrors = (new LayerFile($fileInfoMock, $architecture))->getErrors();
 
         $this->assertEmpty($validationErrors);
     }
@@ -208,7 +208,7 @@ class LayerFileTest extends TestCase
         $architecture = new Architecture($architectureConfig);
         $fileInfoMock = $this->createMock(SplFileInfo::class);
         $fileInfoMock->expects($this->once())->method('getContents')->willReturn($fileContents);
-        $validationErrors = (new LayerFile($fileInfoMock, $architecture))->validate();
+        $validationErrors = (new LayerFile($fileInfoMock, $architecture))->getErrors();
 
         $this->assertEmpty($validationErrors);
     }
@@ -225,7 +225,7 @@ class LayerFileTest extends TestCase
         $architecture = new Architecture($architectureConfig);
         $fileInfoMock = $this->createMock(SplFileInfo::class);
         $fileInfoMock->expects($this->once())->method('getContents')->willReturn($fileContents);
-        $validationErrors = (new LayerFile($fileInfoMock, $architecture))->validate();
+        $validationErrors = (new LayerFile($fileInfoMock, $architecture))->getErrors();
 
         $this->assertEmpty($validationErrors);
     }

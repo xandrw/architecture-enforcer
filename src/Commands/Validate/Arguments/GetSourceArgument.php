@@ -2,13 +2,18 @@
 
 namespace Xandrw\ArchitectureEnforcer\Commands\Validate\Arguments;
 
-use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Exception\InvalidArgumentException;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
+use Xandrw\ArchitectureEnforcer\Commands\Validate\ValidateCommand;
 
 class GetSourceArgument
 {
+    public static function addTo(ValidateCommand $command): void
+    {
+        $command->addArgument(name: 'source', mode: InputArgument::REQUIRED, description: 'Path to app files');
+    }
+
     public function __invoke(InputInterface $input, array $ignore): string
     {
         $source = $input->getArgument('source');
@@ -28,10 +33,5 @@ class GetSourceArgument
         }
 
         return $source;
-    }
-
-    public static function addTo(Command $command): void
-    {
-        $command->addArgument(name: 'source', mode: InputArgument::REQUIRED, description: 'Path to app files');
     }
 }
