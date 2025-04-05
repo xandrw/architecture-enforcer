@@ -55,4 +55,16 @@ class LayerTest extends TestCase
         $layer = new Layer('Test', []);
         $this->assertSame('Test', (string) $layer);
     }
+
+    /** @test */
+    public function removeRootNamespace(): void
+    {
+        $this->assertSame('Namespace', Layer::removeRootNamespace('Test\\Namespace', 'Test'));
+    }
+
+    /** @test */
+    public function removeRootNamespaceContainingSubString(): void
+    {
+        $this->assertSame('Application', Layer::removeRootNamespace('App\\Application', 'App'));
+    }
 }

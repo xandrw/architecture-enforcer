@@ -40,7 +40,7 @@ class ValidateCommand extends Command
             $ignore = (new GetIgnoreOption())($input, $config->getIgnore());
             $source = (new GetSourceArgument())($input, $ignore);
             (new NoCircularOption())($input, $config->getArchitecture());
-            (new PureOption())($input, $source, $config->getArchitecture());
+            (new PureOption())($input, $source, $config->getArchitecture(), $config->getProjectRootNamespace());
         } catch (Exception $e) {
             DefaultRenderer::outputException($output, $e);
             return Command::FAILURE;

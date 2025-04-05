@@ -7,13 +7,15 @@ class Layer
     public function __construct(
         public readonly string $name,
         public readonly array $childLayerNames,
-    )
-    {
-    }
+    ) {}
 
-    public static function removeNameNamespace(string $name): string
+    public static function removeRootNamespace(string $namespace, string $rootNamespace): string
     {
-        return preg_replace('/^Xandrw\\\\ArchitectureEnforcer\\\\/', '', $name);
+        if (!str_ends_with($rootNamespace, '\\')) {
+            $rootNamespace = $rootNamespace . '\\';
+        }
+
+        return str_replace($rootNamespace, '', $namespace);
     }
 
     public function isStrict(): bool

@@ -16,7 +16,7 @@ class NoCircularOptionTest extends TestCase
         $this->expectException(LogicException::class);
 
         $inputMock = $this->createMock(InputInterface::class);
-        $inputMock->expects($this->once())->method('hasOption')->with('no-circular')->willReturn(true);
+        $inputMock->expects($this->once())->method('getOption')->with('no-circular')->willReturn(true);
         $architecture = new Architecture([
             'Test\\LayerA' => ['Test\\LayerB'],
             'Test\\LayerB' => ['Test\\LayerA'],
@@ -28,7 +28,7 @@ class NoCircularOptionTest extends TestCase
     public function successIfCircularOptionSetAndLayersAreNonCircular(): void
     {
         $inputMock = $this->createMock(InputInterface::class);
-        $inputMock->expects($this->once())->method('hasOption')->with('no-circular')->willReturn(true);
+        $inputMock->expects($this->once())->method('getOption')->with('no-circular')->willReturn(true);
         $architecture = new Architecture([
             'Test\\LayerA' => ['Test\\LayerB'],
             'Test\\LayerB' => ['Test\\LayerC'],
@@ -43,7 +43,7 @@ class NoCircularOptionTest extends TestCase
     public function successIfCircularOptionNotSetAndLayersHaveCircularDependencies(): void
     {
         $inputMock = $this->createMock(InputInterface::class);
-        $inputMock->expects($this->once())->method('hasOption')->with('no-circular')->willReturn(false);
+        $inputMock->expects($this->once())->method('getOption')->with('no-circular')->willReturn(false);
         $architecture = new Architecture([
             'Test\\LayerA' => ['Test\\LayerB'],
             'Test\\LayerB' => ['Test\\LayerA'],

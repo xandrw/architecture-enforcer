@@ -12,7 +12,10 @@ class ConfigTest extends TestCase
     /** @test */
     public function successfulInstantiation(): void
     {
-        $config = new Config(['architecture' => ['Test\\Namespace' => []], 'ignore' => ['ignored']]);
+        $config = new Config([
+            'projectRootNamespace' => 'Test',
+            'architecture' => ['Test\\Namespace' => []], 'ignore' => ['ignored']
+        ]);
         $this->assertInstanceOf(Architecture::class, $config->getArchitecture());
         $this->assertTrue($config->getArchitecture()->hasLayer('Test\\Namespace'));
         $this->assertTrue(in_array('ignored', $config->getIgnore()));
@@ -21,7 +24,7 @@ class ConfigTest extends TestCase
     /** @test */
     public function emptyArchitectureAndMissingIgnore(): void
     {
-        $config = new Config(['architecture' => []]);
+        $config = new Config(['projectRootNamespace' => 'Test', 'architecture' => []]);
         $this->assertInstanceOf(Architecture::class, $config->getArchitecture());
         $this->assertEmpty($config->getIgnore());
     }

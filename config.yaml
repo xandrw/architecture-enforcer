@@ -1,3 +1,5 @@
+projectRootNamespace: Xandrw\ArchitectureEnforcer
+
 architecture:
   Xandrw\ArchitectureEnforcer\Commands:
     - Xandrw\ArchitectureEnforcer\Domain

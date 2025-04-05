@@ -34,6 +34,8 @@ The configuration file defines your application's layers and their allowed depen
 <?php
 
 return [
+    // 'projectRootNamespace' is required, used when scanning for namespace:directory
+    'projectRootNamespace' => 'App',
     // 'architecture' is required, it contains the layers in your application
     'architecture' => [
         'App\\Presentation' => [
@@ -61,17 +63,18 @@ return [
 
 ```yaml
 # project-root/config/architecture.yml/yaml
+projectRootNamespace: App
 architecture:
-  'App\Presentation':
-    - 'App\Infrastructure'
-    - 'App\Application'
-    - 'App\Domain'
-  'App\Infrastructure':
-    - 'App\Application'
-    - 'App\Domain'
-  'App\Application':
-    - 'App\Domain'
-  'App\Domain': [ ]
+  App\Presentation:
+    - App\Infrastructure
+    - App\Application
+    - App\Domain
+  App\Infrastructure:
+    - App\Application
+    - App\Domain
+  App\Application:
+    - App\Domain
+  App\Domain: [ ]
 ignore:
   - bin
   - config
@@ -85,6 +88,7 @@ ignore:
 
 ```json
 {
+    "projectRootNamespace": "App",
     "architecture": {
         "App\\Presentation": [
             "App\\Infrastructure",

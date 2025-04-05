@@ -8,12 +8,12 @@ use Xandrw\ArchitectureEnforcer\Domain\Layer;
 
 class ArchitectureDirectoryScanner
 {
-    public function scan(string $source, Architecture $architecture): void
+    public function scan(string $source, Architecture $architecture, string $rootNamespace): void
     {
         $source = rtrim($source, '/');
 
         foreach ($architecture->getLayers() as $layer) {
-            $layerRootName = Layer::removeNameNamespace($layer->name);
+            $layerRootName = Layer::removeRootNamespace($layer->name, $rootNamespace);
             $layerHeadlessPath = str_replace('\\', DIRECTORY_SEPARATOR, $layerRootName);
             $fullLayerPath = "$source/$layerHeadlessPath";
 

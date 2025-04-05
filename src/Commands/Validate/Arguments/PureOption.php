@@ -20,10 +20,15 @@ class PureOption
         );
     }
 
-    public function __invoke(InputInterface $input, string $source, Architecture $architecture): void
+    public function __invoke(
+        InputInterface $input,
+        string $source,
+        Architecture $architecture,
+        string $rootNamespace,
+    ): void
     {
-        if (!$input->hasOption('pure')) return;
+        if (!$input->getOption('pure')) return;
 
-        (new ArchitectureDirectoryScanner())->scan($source, $architecture);
+        (new ArchitectureDirectoryScanner())->scan($source, $architecture, $rootNamespace);
     }
 }

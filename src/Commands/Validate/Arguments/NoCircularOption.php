@@ -22,7 +22,7 @@ class NoCircularOption
 
     public function __invoke(InputInterface $input, Architecture $architecture): void
     {
-        if (!$input->hasOption('no-circular')) return;
+        if (!$input->getOption('no-circular')) return;
 
         $processedLayers = [];
 
